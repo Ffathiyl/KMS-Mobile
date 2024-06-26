@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp"
+    android:backgroundTint="#E3F2FD">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/courseTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Course Title"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#212121" />
+
+        <TextView
+            android:id="@+id/courseDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Course Description"
+            android:textSize="14sp"
+            android:textColor="#757575"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_list"
+                app:tint="#383838" />
+
+            <TextView
+                android:id="@+id/courseMaterialCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Total: 0 Materi"
+                android:textSize="14sp"
+                android:textColor="#212121"
+                android:layout_marginStart="8dp" />
+
+            <Button
+                android:id="@+id/viewMaterialsButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:text="Lihat Daftar Materi"
+                android:textColor="#FFFFFF"
+                android:fontFamily="@font/poppinsregular"
+                android:background="@drawable/button_background"
+                android:paddingHorizontal="16dp"
+                android:textSize="12sp"
+                android:elevation="4dp"
+                android:layout_marginLeft="90dp"/>
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
