@@ -6,9 +6,9 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.ApiUtils;
-import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Service.LoginService;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Service.KKService;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Service.ProdiService;
-import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.LoginModel;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.KKModel;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.ProdiModel;
 
 import org.json.JSONArray;
@@ -24,34 +24,27 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class LoginRepository {
-    private String username;
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    private static final String TAG = "LoginRepository";
-    private static LoginRepository INSTANCE;
-    private LoginService mLoginService;
-    private LoginRepository(Context context){
-        mLoginService = ApiUtils.getLoginService();
+public class KKRepository {
+    private static final String TAG = "KKRepository";
+    private static KKRepository INSTANCE;
+    private KKService mKKService;
+    private KKRepository(Context context){
+        mKKService = ApiUtils.getKKService();
     }
     public static void initialize(Context context){
         if (INSTANCE == null){
-            INSTANCE = new LoginRepository(context);
+            INSTANCE = new KKRepository(context);
         }
     }
-    public static LoginRepository get(){
+    public static KKRepository get(){
         return INSTANCE;
     }
+    public MutableLiveData<List<KKModel>> getListKK() {
+        MutableLiveData<List<KKModel>> data = new MutableLiveData<>();
 
-    public MutableLiveData<List<LoginModel>> getLogin() {
-        MutableLiveData<List<LoginModel>> data = new MutableLiveData<>();
-
-        RequestBody body = RequestBody.create(MediaType.parse("application/json"), "{ \"username\": \""+username+"\"}");
+        RequestBody body = RequestBody.create(MediaType.parse("application/json"), "{ \"page\": 1, \"query\": \"\", \"sort\": \"[Nama Kelompok Keahlian] asc\" }");
         System.out.println(body.contentType());
-        Call<ResponseBody> call = mLoginService.getLogin(body);
+        Call<ResponseBody> call = mKKService.getDataKK(body);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -60,23 +53,22 @@ public class LoginRepository {
                         String jsonString = response.body().string();
                         JSONArray jsonArray = new JSONArray(jsonString);
 
-                        List<LoginModel> loginList = new ArrayList<>();
+                        List<KKModel> KKList = new ArrayList<>();
                         for (int i = 0; i < jsonArray.length(); i++) {
-                            JSONObject prodiObject = jsonArray.getJSONObject(i);
-                            LoginModel prodi = new LoginModel();
-                            prodi.setRoleID(prodiObject.getString("RoleID"));
-                            prodi.setRole(prodiObject.getString("Role"));
-                            prodi.setNama(prodiObject.getString("Nama"));
-                            loginList.add(prodi);
+                            JSONObject kkObject = jsonArray.getJSONObject(i);
+                            KKModel kk = new KKModel();
+                            kk.setKey(kkObject.getString("Key"));
+                            kk.setNamaKelompokKeahlian(kkObject.getString("Nama Kelompok Keahlian"));
+                            if(kkObject.getString("Deskripsi").length() > 30){
+                                kk.setDeskripsi(kkObject.getString("Deskripsi").substring(0,20)+ " ...");
+                            }else{
+                                kk.setDeskripsi(kkObject.getString("Deskripsi"));
+                            }
+//                            kk.setDeskripsi(kkObject.getString("Deskripsi"));
+                            KKList.add(kk);
                         }
-                        data.setValue(loginList);
-                        Log.d(TAG, "Data size: " + loginList.size());
-
-                        // Log detail data yang diterima
-                        for (LoginModel loginModel : loginList) {
-                            Log.d(TAG, "Received data: " + loginModel.getNama());
-                        }
-
+                        data.setValue(KKList);
+                        Log.d(TAG, "Data size: " + KKList.size());
                     } catch (Exception e) {
                         Log.e(TAG, "Error parsing JSON", e);
                     }
@@ -91,7 +83,6 @@ public class LoginRepository {
                 Log.e("Error API call : ", t.getMessage());
             }
         });
-        System.out.println("data LOGIN : "+data);
         return data;
     }
 }

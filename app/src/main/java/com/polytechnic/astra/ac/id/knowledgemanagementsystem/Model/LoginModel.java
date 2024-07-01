@@ -3,7 +3,9 @@ package com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class LoginModel {
+import java.io.Serializable;
+
+public class LoginModel implements Serializable {
 
     @SerializedName("RoleID")
     @Expose

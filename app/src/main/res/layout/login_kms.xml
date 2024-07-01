@@ -56,7 +56,8 @@
         android:layout_marginRight="40dp"
         android:layout_marginLeft="40dp"
         android:background="#E0E0E0"
-        app:endIconMode="password_toggle">
+        app:endIconMode="password_toggle"
+        >
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/password"

@@ -43,12 +43,15 @@ public class MainActivity extends AppCompatActivity {
         String username = usernameEditText.getText().toString().trim();  // Trim untuk menghilangkan spasi tambahan
 
         LoginRepository loginRepository = LoginRepository.get();
+        loginRepository.setUsername(username);
         loginRepository.getLogin().observe(this, new Observer<List<LoginModel>>() {
             @Override
             public void onChanged(List<LoginModel> loginModels) {
                 if (loginModels != null && !loginModels.isEmpty()) {
                     // If data is not empty, navigate to MainActivity
+                    LoginModel loginModel = loginModels.get(0);
                     Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                    intent.putExtra("LoginModel", loginModel);
                     startActivity(intent);
                     finish();
                 } else {

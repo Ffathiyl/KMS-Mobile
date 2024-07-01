@@ -3,6 +3,7 @@ package com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
 import java.util.UUID;
 
 public class ProdiModel {
@@ -14,6 +15,8 @@ public class ProdiModel {
     @Expose
     private String nama;
 
+    private List<KKModel> kkModelList;
+
     public ProdiModel() {
         this.id = UUID.randomUUID().toString();
         this.nama = "";
@@ -22,6 +25,12 @@ public class ProdiModel {
     public ProdiModel(String id, String nama) {
         this.id = id;
         this.nama = nama;
+    }
+
+    public ProdiModel(String id, String nama, List<KKModel> kkModelList) {
+        this.id = id;
+        this.nama = nama;
+        this.kkModelList = kkModelList;
     }
 
     public String getId() {
@@ -38,5 +47,13 @@ public class ProdiModel {
 
     public void setNama(String nama) {
         this.nama = nama;
+    }
+
+    public List<KKModel> getKkModelList() {
+        return kkModelList;
+    }
+
+    public void setKkModelList(List<KKModel> kkModelList) {
+        this.kkModelList = kkModelList;
     }
 }

@@ -1,5 +1,6 @@
 package com.polytechnic.astra.ac.id.knowledgemanagementsystem.API;
 
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Service.KKService;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Service.ProdiService;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Service.LoginService;
 
@@ -15,5 +16,9 @@ public class ApiUtils {
 
     public static LoginService getLoginService(){
         return RetrofitClient.getClient(API_URL).create(LoginService.class);
+    }
+
+    public static KKService getKKService(){
+        return RetrofitClient.getClient(API_URL).create(KKService.class);
     }
 }

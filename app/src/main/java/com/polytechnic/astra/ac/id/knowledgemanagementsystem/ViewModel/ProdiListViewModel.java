@@ -13,8 +13,8 @@ public class ProdiListViewModel extends ViewModel {
     private ProdiRepository mProdiRepository;
     public ProdiListViewModel(){
         mProdiRepository = ProdiRepository.get();
-//        mMyModelListMutableLiveData = mProdiRepository.getListProdi();
-        mMyModelListMutableLiveData = mProdiRepository.getListKK();
+        mMyModelListMutableLiveData = mProdiRepository.getListProdi();
+//        mMyModelListMutableLiveData = mProdiRepository.getListKK();
     }
     public MutableLiveData<List<ProdiModel>> getListModel(){
         return mMyModelListMutableLiveData;

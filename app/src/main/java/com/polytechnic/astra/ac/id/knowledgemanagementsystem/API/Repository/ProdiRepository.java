@@ -57,10 +57,16 @@ public class ProdiRepository {
                             JSONObject prodiObject = jsonArray.getJSONObject(i);
                             ProdiModel prodi = new ProdiModel();
                             prodi.setId(prodiObject.getString("Value"));
-                            prodi.setNama(prodiObject.getString("Text"));
+//                            prodi.setNama(prodiObject.getString("Text"));
+                            if(prodiObject.getString("Text").length() > 22){
+                                prodi.setNama(prodiObject.getString("Text").substring(0,22)+ " ...");
+                            }else{
+                                prodi.setNama(prodiObject.getString("Text"));
+                            }
                             prodiList.add(prodi);
                         }
                         data.setValue(prodiList);
+                        System.out.println("data prodi: "+data);
                         Log.d(TAG, "Data size: " + prodiList.size());
                     } catch (Exception e) {
                         Log.e(TAG, "Error parsing JSON", e);
