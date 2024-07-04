@@ -3,10 +3,11 @@ package com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 
-public class ProdiModel {
+public class ProdiModel implements Serializable {
     @SerializedName("id")
     @Expose
     private String id;

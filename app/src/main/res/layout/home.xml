@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".Activity.LoginActivity"
-    android:background="@color/white"
+    android:background="#eeeeee"
     >
 
     <LinearLayout
@@ -122,11 +122,12 @@
                     </LinearLayout>
 
                     <ImageButton
+                        android:id="@+id/bookmark"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:background="#0056A6"
                         android:layout_gravity="center_vertical"
-                        android:src="@drawable/ic_bookmark" />
+                        android:src="@drawable/ic_bookmark_fill" />
                 </LinearLayout>
 
                 <LinearLayout

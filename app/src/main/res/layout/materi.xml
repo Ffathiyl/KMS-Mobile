@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".Activity.MataKuliah"
+    tools:context=".MainActivity"
     android:background="#eeeeee"
     >
 
@@ -25,28 +25,28 @@
             android:id="@+id/materi"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Data Science"
+            android:text="Database Engineering"
             android:fontFamily="@font/poppinsblack"
             android:textAlignment="center"
             android:textSize="18sp"
             android:textStyle="bold"
             android:padding="20dp"
-            android:textColor="@color/black"
-            android:layout_marginRight="40dp"/>
+            android:layout_marginRight="40dp"
+            android:textColor="@color/black"/>
 
     </LinearLayout>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Daftar Mata Kuliah"
+        android:text="Daftar Materi"
         android:fontFamily="@font/poppinsemibold"
         android:textAlignment="center"
         android:textSize="14sp"
         android:padding="10dp"/>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/matkul"
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="8dp"/>

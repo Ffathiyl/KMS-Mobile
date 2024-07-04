@@ -2,15 +2,19 @@
 
     import androidx.fragment.app.Fragment;
     import android.content.Context;
+    import android.content.Intent;
     import android.view.LayoutInflater;
     import android.view.View;
     import android.view.ViewGroup;
     import android.widget.ImageButton;
+    import android.widget.LinearLayout;
     import android.widget.TextView;
 
     import androidx.annotation.NonNull;
     import androidx.recyclerview.widget.RecyclerView;
 
+    import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Activity.MataKuliah;
+    import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Activity.ProgramKeilmuan;
     import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.KKModel;
     import com.polytechnic.astra.ac.id.knowledgemanagementsystem.R;
 
@@ -40,26 +44,24 @@
 
         @Override
         public void onBindViewHolder(@NonNull KKViewHolder holder, int position) {
-            if (kkModelList == null) return; // Null check to avoid NullPointerException
 
             KKModel kkModel = kkModelList.get(position);
             holder.titleTextView.setText(kkModel.getNamaKelompokKeahlian());
             holder.descriptionTextView.setText(kkModel.getDeskripsi());
-            // Set other fields as necessary
 
-            // You can handle click events here if needed
-            holder.iconImageView.setOnClickListener(v -> {
-                // Handle icon click
-            });
-
-            holder.itemView.setOnClickListener(v -> {
-                // Handle item click
+            holder.button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, MataKuliah.class);
+                    intent.putExtra("kkModel", kkModel);
+                    context.startActivity(intent);
+                }
             });
         }
 
         @Override
         public int getItemCount() {
-            return kkModelList != null ? kkModelList.size() : 0; // Return 0 if list is null
+            return kkModelList != null ? kkModelList.size() : 0;
         }
 
         public static class KKViewHolder extends RecyclerView.ViewHolder {
@@ -67,12 +69,14 @@
             TextView titleTextView;
             TextView descriptionTextView;
             ImageButton iconImageView;
+            LinearLayout button;
 
             public KKViewHolder(@NonNull View itemView) {
                 super(itemView);
                 titleTextView = itemView.findViewById(R.id.titleTextView);
                 descriptionTextView = itemView.findViewById(R.id.descriptionTextView);
                 iconImageView = itemView.findViewById(R.id.iconImageView);
+                button = itemView.findViewById(R.id.buttonPanel);
             }
 
         }

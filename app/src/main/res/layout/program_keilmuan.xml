@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".Activity.MataKuliah"
+    tools:context=".Activity.ProgramKeilmuan"
     android:background="#eeeeee"
     >
 
@@ -22,10 +22,9 @@
             android:background="#FFFFFF"
             app:srcCompat="@drawable/baseline_arrow_back_24" />
         <TextView
-            android:id="@+id/materi"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Data Science"
+            android:text="Program Keilmuan"
             android:fontFamily="@font/poppinsblack"
             android:textAlignment="center"
             android:textSize="18sp"
@@ -37,16 +36,20 @@
     </LinearLayout>
 
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/judulProdi"
+        android:background="#0056A6"
+        android:textColor="@color/white"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Daftar Mata Kuliah"
-        android:fontFamily="@font/poppinsemibold"
+        android:text="Prodi: Manajemen Informatika"
         android:textAlignment="center"
-        android:textSize="14sp"
-        android:padding="10dp"/>
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="80dp"
+        android:layout_marginLeft="80dp"
+        />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/matkul"
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="8dp"/>

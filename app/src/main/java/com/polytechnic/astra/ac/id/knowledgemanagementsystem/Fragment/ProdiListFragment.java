@@ -1,6 +1,8 @@
 package com.polytechnic.astra.ac.id.knowledgemanagementsystem.Fragment;
 
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,11 +12,14 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Activity.LoginActivity;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Activity.ProgramKeilmuan;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.MainActivity;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.KKModel;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.LoginModel;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.ProdiModel;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.R;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.ViewModel.KKViewModel;
@@ -26,6 +31,7 @@ public class ProdiListFragment extends RecyclerView.Adapter<ProdiListFragment.Pr
 
     private List<ProdiModel> prodiModelList;
     private Context context;
+
 
     public ProdiListFragment(List<ProdiModel> prodiModelList, Context context) {
         this.prodiModelList = prodiModelList;
@@ -60,9 +66,16 @@ public class ProdiListFragment extends RecyclerView.Adapter<ProdiListFragment.Pr
         KKViewModel kkViewModel = new ViewModelProvider((ViewModelStoreOwner) context).get(KKViewModel.class);
         kkViewModel.getListModel().observe((LifecycleOwner) context, kkModels -> {
             List<KKModel> top2KkModels = new ArrayList<>();
-            for (int i = 0; i < Math.min(kkModels.size(), 2); i++) {
-                top2KkModels.add(kkModels.get(i));
+            for (KKModel kkModel : kkModels) {
+                Log.d("KKViewModel", "KKModel Prodi: " + kkModel.getProdi());
+                if (kkModel.getProdi().equals(prodiModel.getNama())) {
+                    top2KkModels.add(kkModel);
+                    if (top2KkModels.size() == 2) {
+                        break;
+                    }
+                }
             }
+            Log.d("KKViewModel", "Filtered KKModels size: " + top2KkModels.size());
             kkAdapter.setKKModelList(top2KkModels);
             kkAdapter.notifyDataSetChanged();
         });
@@ -70,6 +83,14 @@ public class ProdiListFragment extends RecyclerView.Adapter<ProdiListFragment.Pr
         // Set other fields as necessary
         holder.itemView.setOnClickListener(v -> {
             // Handle item click
+        });
+        holder.showmore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ProgramKeilmuan.class);
+                intent.putExtra("prodiModel", prodiModel);
+                context.startActivity(intent);
+            }
         });
     }
 
@@ -82,11 +103,13 @@ public class ProdiListFragment extends RecyclerView.Adapter<ProdiListFragment.Pr
 
         TextView prodi;
         RecyclerView recyclerViewKK;
+        TextView showmore;
 
         public ProdiViewHolder(@NonNull View itemView) {
             super(itemView);
             prodi = itemView.findViewById(R.id.prodi);
             recyclerViewKK = itemView.findViewById(R.id.kklist);
+            showmore = itemView.findViewById(R.id.showmore);
         }
     }
 }

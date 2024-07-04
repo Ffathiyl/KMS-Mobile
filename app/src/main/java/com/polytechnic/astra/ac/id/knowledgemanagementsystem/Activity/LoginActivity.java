@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -43,12 +44,16 @@ public class LoginActivity extends AppCompatActivity {
     private RecyclerView recyclerViewKK;
     private KKListFragment kkAdapter;
     private KKViewModel kkViewModel;
+    private ImageButton bookmarkButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home);
         nama = findViewById(R.id.nama);
+        ImageButton bookmarkButton = findViewById(R.id.bookmark);
+        bookmarkButton.setTag(false);
+
         LoginModel loginModel = (LoginModel) getIntent().getSerializableExtra("LoginModel");
         if (loginModel != null) {
             nama.setText("Hai, " + loginModel.getNama());
@@ -72,16 +77,27 @@ public class LoginActivity extends AppCompatActivity {
             prodiAdapter.notifyDataSetChanged();
 
         });
-//        recyclerViewKK = findViewById(R.id.recyclerView2);
-//        recyclerViewKK.setLayoutManager(new LinearLayoutManager(this));
-//        kkAdapter = new KKListFragment(new ArrayList<>(), this);
-//        recyclerViewKK.setAdapter(kkAdapter);
+
+        bookmarkButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean isBookmarked = (boolean) bookmarkButton.getTag();
+                if (isBookmarked) {
+                    bookmarkButton.setImageResource(R.drawable.ic_bookmark_empty);
+                } else {
+                    bookmarkButton.setImageResource(R.drawable.ic_bookmark_fill);
+                }
+                bookmarkButton.setTag(!isBookmarked);
+            }
+        });
 //
-//        // Initialize ViewModel for KKListFragment
-//        kkViewModel = new ViewModelProvider(this).get(KKViewModel.class);
-//        kkViewModel.getListModel().observe(this, kkModels -> {
-//            kkAdapter.setKKModelList(kkModels);
-//            kkAdapter.notifyDataSetChanged();
+//        TextView tv=(TextView)findViewById(R.id.showmore);
+//
+//        tv.setOnClickListener(new View.OnClickListener() {
+//
+//            public void onClick(View v) {
+//                //perform your action here
+//            }
 //        });
     }
 }

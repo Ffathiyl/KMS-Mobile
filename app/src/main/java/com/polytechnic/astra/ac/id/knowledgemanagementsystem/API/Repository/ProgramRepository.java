@@ -7,9 +7,9 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.ApiUtils;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Service.KKService;
-import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Service.ProdiService;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Service.ProgramService;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.KKModel;
-import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.ProdiModel;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.ProgramModel;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -24,27 +24,28 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class KKRepository {
-    private static final String TAG = "KKRepository";
-    private static KKRepository INSTANCE;
-    private KKService mKKService;
-    private KKRepository(Context context){
-        mKKService = ApiUtils.getKKService();
+public class ProgramRepository {
+
+    private static final String TAG = "ProgramRepository";
+    private static ProgramRepository INSTANCE;
+    private ProgramService mProgramService;
+    private ProgramRepository(Context context){
+        mProgramService = ApiUtils.getProgramService();
     }
     public static void initialize(Context context){
         if (INSTANCE == null){
-            INSTANCE = new KKRepository(context);
+            INSTANCE = new ProgramRepository(context);
         }
     }
-    public static KKRepository get(){
+    public static ProgramRepository get(){
         return INSTANCE;
     }
-    public MutableLiveData<List<KKModel>> getListKK() {
-        MutableLiveData<List<KKModel>> data = new MutableLiveData<>();
+    public MutableLiveData<List<ProgramModel>> getListProgram() {
+        MutableLiveData<List<ProgramModel>> data = new MutableLiveData<>();
 
-        RequestBody body = RequestBody.create(MediaType.parse("application/json"), "{ \"page\": 1, \"query\": \"\", \"sort\": \"[Nama Kelompok Keahlian] asc\" }");
+        RequestBody body = RequestBody.create(MediaType.parse("application/json"), "{ \"page\": 1, \"query\": \"\", \"sort\": \"[Nama Program] asc\",\"Status\" : \"Aktif\", \"KKID\" : \"002\"  }");
         System.out.println(body.contentType());
-        Call<ResponseBody> call = mKKService.getDataKK(body);
+        Call<ResponseBody> call = mProgramService.getDataProgram(body);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -53,23 +54,24 @@ public class KKRepository {
                         String jsonString = response.body().string();
                         JSONArray jsonArray = new JSONArray(jsonString);
 
-                        List<KKModel> KKList = new ArrayList<>();
+                        List<ProgramModel> ProgramList = new ArrayList<>();
                         for (int i = 0; i < jsonArray.length(); i++) {
-                            JSONObject kkObject = jsonArray.getJSONObject(i);
-                            KKModel kk = new KKModel();
-                            kk.setKey(kkObject.getString("Key"));
-                            kk.setNamaKelompokKeahlian(kkObject.getString("Nama Kelompok Keahlian"));
-                            if(kkObject.getString("Deskripsi").length() > 30){
-                                kk.setDeskripsi(kkObject.getString("Deskripsi").substring(0,20)+ " ...");
+                            JSONObject programObject = jsonArray.getJSONObject(i);
+                            ProgramModel programModel = new ProgramModel();
+                            programModel.setKey(programObject.getString("Key"));
+                            programModel.setKKID(programObject.getString("KKiD"));
+                            programModel.setNamaProgram(programObject.getString("Nama Program"));
+                            if(programObject.getString("Deskripsi").length() > 30){
+                                programModel.setDeskripsi(programObject.getString("Deskripsi").substring(0,20)+ " ...");
                             }else{
-                                kk.setDeskripsi(kkObject.getString("Deskripsi"));
+                                programModel.setDeskripsi(programObject.getString("Deskripsi"));
                             }
-                            kk.setProdi(kkObject.getString("Prodi"));
 //                            kk.setDeskripsi(kkObject.getString("Deskripsi"));
-                            KKList.add(kk);
+                            ProgramList.add(programModel);
+                            System.out.println("SSSSSSSSSS : "+ProgramList);
                         }
-                        data.setValue(KKList);
-                        Log.d(TAG, "Data size: " + KKList.size());
+                        data.setValue(ProgramList);
+                        Log.d(TAG, "Data size: " + ProgramList.size());
                     } catch (Exception e) {
                         Log.e(TAG, "Error parsing JSON", e);
                     }

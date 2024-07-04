@@ -88,7 +88,7 @@ public class ProdiRepository {
     public MutableLiveData<List<ProdiModel>> getListKK() {
         MutableLiveData<List<ProdiModel>> data = new MutableLiveData<>();
 
-        RequestBody body = RequestBody.create(MediaType.parse("application/json"), "{ \"page\": 1, \"query\": \"\", \"sort\": \"[Nama Kelompok Keahlian] asc\" }");
+        RequestBody body = RequestBody.create(MediaType.parse("application/json"), "{ \"page\": \"1\", \"query\": \"\", \"sort\": \"[Nama Kelompok Keahlian] asc\" }");
         System.out.println(body.contentType());
         Call<ResponseBody> call = mProdiService.getDataKK(body);
         call.enqueue(new Callback<ResponseBody>() {

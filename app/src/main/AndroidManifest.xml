@@ -26,6 +26,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".Activity.LoginActivity"/>
+        <activity android:name=".Activity.ProgramKeilmuan"/>
+        <activity android:name=".Activity.MataKuliah"/>
+        <activity android:name=".Activity.Materi"/>
     </application>
 
 </manifest>
