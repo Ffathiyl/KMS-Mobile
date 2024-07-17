@@ -1,5 +1,6 @@
 package com.polytechnic.astra.ac.id.knowledgemanagementsystem.API;
 
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Service.FileUnduhService;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Service.KKService;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Service.KategoriService;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Service.MateriService;
@@ -8,7 +9,7 @@ import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Service.LoginSe
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Service.ProgramService;
 
 public class ApiUtils {
-    public static final String API_URL = "http://10.1.6.178:8080/";
+    public static final String API_URL = "http://10.1.15.153:8080/";
 
     public ApiUtils() {
     }
@@ -35,5 +36,8 @@ public class ApiUtils {
 
     public static MateriService getMateriService(){
         return RetrofitClient.getClient(API_URL).create(MateriService.class);
+    }
+    public static FileUnduhService getFileUnduhService(){
+        return RetrofitClient.getClient(API_URL).create(FileUnduhService.class);
     }
 }
