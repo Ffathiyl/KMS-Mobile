@@ -11,6 +11,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Repository.KategoriRepository;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Repository.ProgramRepository;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Fragment.KKListFragment;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Fragment.KategoriListFragment;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.KKModel;
@@ -53,6 +55,10 @@ public class Materi extends AppCompatActivity {
 
         // Initialize ViewModel
         kategoriViewModel = new ViewModelProvider(this).get(KategoriViewModel.class);
+
+        KategoriRepository kategoriRepository = KategoriRepository.get();
+        System.out.println(": "+programModel.getKey());
+        kategoriRepository.setProdi(programModel.getKey());
 
         // Observe LiveData from ViewModel
         kategoriViewModel.getListModel().observe(this, kategoriModels -> {

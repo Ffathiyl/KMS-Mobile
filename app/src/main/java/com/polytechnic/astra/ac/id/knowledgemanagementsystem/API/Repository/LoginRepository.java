@@ -49,7 +49,7 @@ public class LoginRepository {
     public MutableLiveData<List<LoginModel>> getLogin() {
         MutableLiveData<List<LoginModel>> data = new MutableLiveData<>();
 
-        RequestBody body = RequestBody.create(MediaType.parse("application/json"), "{ \"username\": \"kristina\"}");
+        RequestBody body = RequestBody.create(MediaType.parse("application/json"), "{ \"username\": \""+username+"\"}");
         System.out.println(body.contentType());
         Call<ResponseBody> call = mLoginService.getLogin(body);
         call.enqueue(new Callback<ResponseBody>() {

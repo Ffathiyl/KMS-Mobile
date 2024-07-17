@@ -12,6 +12,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Repository.KategoriRepository;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Repository.MateriRepository;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Repository.ProgramRepository;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Activity.FileMateri;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Activity.MataKuliah;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.KKModel;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.KategoriModel;
@@ -47,6 +51,17 @@ public class KategoriListFragment extends RecyclerView.Adapter<KategoriListFragm
         KategoriModel kategoriModel = kategoriModelList.get(position);
         holder.titleTextView.setText("Materi : " + kategoriModel.getNamaKategori());
 
+        holder.button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MateriRepository materiRepository = MateriRepository.get();
+                materiRepository.setKat(kategoriModel.getKey());
+                Intent intent = new Intent(context, FileMateri.class);
+                intent.putExtra("kategoriModel", kategoriModel);
+                context.startActivity(intent);
+            }
+        });
+
     }
 
     @Override
@@ -66,7 +81,7 @@ public class KategoriListFragment extends RecyclerView.Adapter<KategoriListFragm
             titleTextView = itemView.findViewById(R.id.titleTextView);
             descriptionTextView = itemView.findViewById(R.id.descriptionTextView);
             iconImageView = itemView.findViewById(R.id.iconImageView);
-            button = itemView.findViewById(R.id.buttonPanel);
+            button = itemView.findViewById(R.id.materi);
         }
 
     }

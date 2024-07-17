@@ -29,6 +29,12 @@ public class ProgramRepository {
     private static final String TAG = "ProgramRepository";
     private static ProgramRepository INSTANCE;
     private ProgramService mProgramService;
+    private String kk;
+
+    public void setKk(String kk) {
+        this.kk = kk;
+    }
+
     private ProgramRepository(Context context){
         mProgramService = ApiUtils.getProgramService();
     }
@@ -42,8 +48,9 @@ public class ProgramRepository {
     }
     public MutableLiveData<List<ProgramModel>> getListProgram() {
         MutableLiveData<List<ProgramModel>> data = new MutableLiveData<>();
+        System.out.println("PELER: "+kk);
 
-        RequestBody body = RequestBody.create(MediaType.parse("application/json"), "{ \"page\": 1, \"query\": \"\", \"sort\": \"[Nama Program] asc\",\"Status\" : \"Aktif\", \"KKID\" : \"002\"  }");
+        RequestBody body = RequestBody.create(MediaType.parse("application/json"), "{ \"page\": 1, \"query\": \"\", \"sort\": \"[Nama Program] asc\",\"Status\" : \"Aktif\", \"KKID\" : \""+kk+"\"  }");
         System.out.println(body.contentType());
         Call<ResponseBody> call = mProgramService.getDataProgram(body);
         call.enqueue(new Callback<ResponseBody>() {

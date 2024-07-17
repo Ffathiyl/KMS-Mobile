@@ -13,6 +13,7 @@
     import androidx.annotation.NonNull;
     import androidx.recyclerview.widget.RecyclerView;
 
+    import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Repository.ProgramRepository;
     import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Activity.MataKuliah;
     import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Activity.ProgramKeilmuan;
     import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.KKModel;
@@ -46,12 +47,17 @@
         public void onBindViewHolder(@NonNull KKViewHolder holder, int position) {
 
             KKModel kkModel = kkModelList.get(position);
+
             holder.titleTextView.setText(kkModel.getNamaKelompokKeahlian());
             holder.descriptionTextView.setText(kkModel.getDeskripsi());
 
             holder.button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    System.out.println("KK MODEL: "+kkModel.getNamaKelompokKeahlian());
+                    System.out.println("KK MODELs: "+kkModel.getKey());
+                    ProgramRepository programRepository = ProgramRepository.get();
+                    programRepository.setKk(kkModel.getKey());
                     Intent intent = new Intent(context, MataKuliah.class);
                     intent.putExtra("kkModel", kkModel);
                     context.startActivity(intent);

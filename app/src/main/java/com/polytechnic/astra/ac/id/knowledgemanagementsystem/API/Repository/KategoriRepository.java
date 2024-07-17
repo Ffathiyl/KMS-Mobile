@@ -28,7 +28,12 @@ public class KategoriRepository {
         private static final String TAG = "KategoriRepository";
         private static KategoriRepository INSTANCE;
         private KategoriService mKategoriService;
-        private KategoriRepository(Context context){
+        private String pro;
+        public void setProdi(String pro) {
+            this.pro = pro;
+        }
+
+    private KategoriRepository(Context context){
             mKategoriService = ApiUtils.getKategoriService();
         }
         public static void initialize(Context context){
@@ -40,9 +45,10 @@ public class KategoriRepository {
             return INSTANCE;
         }
         public MutableLiveData<List<KategoriModel>> getListKategori() {
+            System.out.println("MEMEK: "+pro);
             MutableLiveData<List<KategoriModel>> data = new MutableLiveData<>();
 
-            RequestBody body = RequestBody.create(MediaType.parse("application/json"), "{ \"page\": 1, \"query\": \"\", \"sort\": \"[Nama Kategori] asc\" }");
+            RequestBody body = RequestBody.create(MediaType.parse("application/json"), "{ \"page\": 1, \"query\": \"\", \"sort\": \"[Nama Kategori] asc\", \"Status\": \"Aktif\", \"Prodi\": \""+pro+"\" }");
             System.out.println(body.contentType());
             Call<ResponseBody> call = mKategoriService.getDataKategori(body);
             call.enqueue(new Callback<ResponseBody>() {

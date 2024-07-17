@@ -58,6 +58,7 @@ public class KKRepository {
                             JSONObject kkObject = jsonArray.getJSONObject(i);
                             KKModel kk = new KKModel();
                             kk.setKey(kkObject.getString("Key"));
+
                             kk.setNamaKelompokKeahlian(kkObject.getString("Nama Kelompok Keahlian"));
                             if(kkObject.getString("Deskripsi").length() > 30){
                                 kk.setDeskripsi(kkObject.getString("Deskripsi").substring(0,20)+ " ...");

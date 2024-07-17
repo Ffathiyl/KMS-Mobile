@@ -60,6 +60,9 @@ public class MataKuliah extends AppCompatActivity {
         programViewModel = new ViewModelProvider(this).get(ProgramViewModel.class);
 
         // Observe LiveData from ViewModel
+        ProgramRepository programRepository = ProgramRepository.get();
+        System.out.println(": "+kkModel.getKey());
+        programRepository.setKk(kkModel.getKey());
         programViewModel.getListModel().observe(this, programModels -> {
             // Update adapter with new data
             List<ProgramModel> filteredProgramModels = new ArrayList<>();

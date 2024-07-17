@@ -33,11 +33,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText usernameEditText;
     private EditText passwordEditText;
-
     private TextView nama;
-
     private Button loginButton;
-
     private RecyclerView recyclerView;
     private ProdiListFragment prodiAdapter;
     private ProdiListViewModel prodiViewModel;
@@ -45,12 +42,14 @@ public class LoginActivity extends AppCompatActivity {
     private KKListFragment kkAdapter;
     private KKViewModel kkViewModel;
     private ImageButton bookmarkButton;
+    private ImageButton logoutButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home);
         nama = findViewById(R.id.nama);
+        logoutButton = findViewById(R.id.logout);
         ImageButton bookmarkButton = findViewById(R.id.bookmark);
         bookmarkButton.setTag(false);
 
@@ -88,6 +87,15 @@ public class LoginActivity extends AppCompatActivity {
                     bookmarkButton.setImageResource(R.drawable.ic_bookmark_fill);
                 }
                 bookmarkButton.setTag(!isBookmarked);
+            }
+        });
+
+        logoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
             }
         });
 //
