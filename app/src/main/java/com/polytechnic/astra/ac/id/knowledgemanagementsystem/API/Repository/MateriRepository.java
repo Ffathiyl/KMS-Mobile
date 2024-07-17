@@ -70,6 +70,8 @@ public class MateriRepository {
                             materi.setFilePdf(materiObject.getString("File_pdf"));
                             materi.setFileVideo(materiObject.getString("File_video"));
                             materi.setKeterangan(materiObject.getString("Keterangan"));
+                            materi.setUploader(materiObject.getString("Uploader").substring(0,10) + " ");
+                            materi.setCreadate(materiObject.getString("Creadate"));
                             System.out.println("sadljsakd : "+ materi);
                             MateriList.add(materi);
                         }

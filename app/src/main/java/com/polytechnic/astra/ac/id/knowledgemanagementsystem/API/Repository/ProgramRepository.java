@@ -68,7 +68,7 @@ public class ProgramRepository {
                             programModel.setKey(programObject.getString("Key"));
                             programModel.setKKID(programObject.getString("KKiD"));
                             programModel.setNamaProgram(programObject.getString("Nama Program"));
-                            if(programObject.getString("Deskripsi").length() > 30){
+                            if(programObject.getString("Deskripsi").length() > 50){
                                 programModel.setDeskripsi(programObject.getString("Deskripsi").substring(0,20)+ " ...");
                             }else{
                                 programModel.setDeskripsi(programObject.getString("Deskripsi"));

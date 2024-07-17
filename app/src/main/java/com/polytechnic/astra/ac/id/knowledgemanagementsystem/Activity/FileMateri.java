@@ -100,6 +100,8 @@ public class FileMateri extends AppCompatActivity {
         judulMateri.setText(materiModel.getJudulKK());
         deskripsiMateri.setText(materiModel.getKeterangan());
         judulFile.setText(materiModel.getFilePdf());
+        author.setText("Author : " +materiModel.getUploader());
+        tanggal.setText("Diunggah pada : " +materiModel.getCreadate());
 
 
         unduh.setVisibility(View.VISIBLE); // Make sure download button is visible

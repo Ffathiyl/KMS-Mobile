@@ -70,6 +70,7 @@ public class KategoriRepository {
                                 }else{
                                     kategori.setDeskripsi(kategoriObject.getString("Deskripsi"));
                                 }
+                                kategori.setMaterialCount(kategoriObject.getString("MateriCount"));
                                 kategori.setProID(kategoriObject.getString("ProID"));
 //                            kk.setDeskripsi(kkObject.getString("Deskripsi"));
                                 KategoriList.add(kategori);

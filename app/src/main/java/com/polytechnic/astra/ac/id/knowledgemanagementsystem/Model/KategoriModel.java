@@ -34,11 +34,15 @@ public class KategoriModel implements Serializable {
     @Expose
     private String Count;
 
+    @SerializedName("MaterialCount")
+    @Expose
+    private String MaterialCount;
+
     public KategoriModel() {
 
     }
 
-    public KategoriModel(String key, String no, String proID, String namaKategori, String deskripsi, String status, String count) {
+    public KategoriModel(String key, String no, String proID, String namaKategori, String deskripsi, String status, String count, String MaterialCount) {
         Key = key;
         No = no;
         ProID = proID;
@@ -46,6 +50,15 @@ public class KategoriModel implements Serializable {
         Deskripsi = deskripsi;
         Status = status;
         Count = count;
+        this.MaterialCount = MaterialCount;
+    }
+
+    public String getMaterialCount() {
+        return MaterialCount;
+    }
+
+    public void setMaterialCount(String materialCount) {
+        MaterialCount = materialCount;
     }
 
     public String getKey() {
