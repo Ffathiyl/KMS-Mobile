@@ -61,7 +61,6 @@ public class KategoriListFragment extends RecyclerView.Adapter<KategoriListFragm
         KategoriModel kategoriModel = kategoriModelList.get(position);
         holder.titleTextView.setText("Materi : " + kategoriModel.getNamaKategori());
 
-        MateriModel foundMateri = null;
         for (MateriModel materiModel : materiModelList) {
             if (materiModel.getKategori().equals(kategoriModel.getNamaKategori())) {
                 holder.tanggal.setText("Tanggal : " + materiModel.getCreadate());
@@ -88,7 +87,7 @@ public class KategoriListFragment extends RecyclerView.Adapter<KategoriListFragm
                     dbHelper.removeBookmark(kategoriModel.getNamaKategori());
                     holder.bookmarkButton.setImageResource(R.drawable.ic_bookmark_empty);
                 } else {
-                    dbHelper.addBookmark(kategoriModel.getNamaKategori());
+                    dbHelper.addBookmark(kategoriModel.getKey());
                     holder.bookmarkButton.setImageResource(R.drawable.ic_bookmark_fill);
                 }
             }

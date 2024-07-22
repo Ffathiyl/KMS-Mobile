@@ -24,6 +24,10 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
         this.context = context;
     }
 
+    public void setKategoriModelList(List<KategoriModel> kategoriModelList) {
+        this.kategoriModelList = kategoriModelList;
+    }
+
     @NonNull
     @Override
     public BookmarkViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

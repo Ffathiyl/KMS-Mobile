@@ -2,6 +2,7 @@ package com.polytechnic.astra.ac.id.knowledgemanagementsystem.Activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -13,12 +14,15 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Repository.MateriRepository;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.DBHelper.BookmarkDatabaseHelper;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Fragment.BookmarkAdapter;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Repository.KategoriRepository;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.KategoriModel;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.R;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.ViewModel.BookmarkViewModel;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.ViewModel.KategoriViewModel;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.ViewModel.MateriViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +34,9 @@ public class MateriTersimpan extends AppCompatActivity {
     private BookmarkDatabaseHelper dbHelper;
     private KategoriRepository kategoriRepository;
     private ImageButton back;
-    private KategoriViewModel kategoriViewModel;
+    private BookmarkViewModel bookmarkViewModel;
+    String id;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,17 +49,25 @@ public class MateriTersimpan extends AppCompatActivity {
         dbHelper = new BookmarkDatabaseHelper(this);
         kategoriRepository = KategoriRepository.get();
 
-        bookmarkAdapter = new BookmarkAdapter(kategoriModelList, MateriTersimpan.this);
+        bookmarkAdapter = new BookmarkAdapter(new ArrayList<>(), this);
         recyclerView.setAdapter(bookmarkAdapter);
 
-        kategoriViewModel = new ViewModelProvider(this).get(KategoriViewModel.class);
-        kategoriViewModel.getListModel().observe(this, kategoriModels -> {
-            List<String> bookmarkedCategories = dbHelper.getAllBookmarks();
+        bookmarkViewModel = new ViewModelProvider(this).get(BookmarkViewModel.class);
+
+        bookmarkViewModel.getListModel().observe(this, bookmarkModels -> {
+            // Update adapter with new data
             List<KategoriModel> filteredKategoriModels = new ArrayList<>();
+            for (KategoriModel kategoriModel : bookmarkModels) {
+                System.out.println("ktmodel : " + kategoriModel);
+
+                    filteredKategoriModels.add(kategoriModel);
+
+            }
+            Log.d("KKViewModel", "Filtered KategorModels size: " + filteredKategoriModels.size());
+            bookmarkAdapter.setKategoriModelList(filteredKategoriModels);
+            bookmarkAdapter.notifyDataSetChanged();
 
         });
-
-
 
         back.setOnClickListener(new View.OnClickListener() {
             @Override

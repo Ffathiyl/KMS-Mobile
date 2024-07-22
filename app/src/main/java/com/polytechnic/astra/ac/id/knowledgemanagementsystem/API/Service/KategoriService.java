@@ -11,4 +11,9 @@ public interface KategoriService {
     Call<ResponseBody> getDataKategori(
             @Body RequestBody body
     );
+
+    @POST("KategoriProgram/GetKategoriById")
+    Call<ResponseBody> getDataKategoriById(
+            @Body RequestBody body
+    );
 }

@@ -14,6 +14,8 @@ public class BookmarkDatabaseHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
     private static final String TABLE_BOOKMARKS = "bookmarks";
     private static final String COLUMN_ID = "id";
+    private static final String COLUMN_KEY = "key";
+    private static final String COLUMN_PRO_ID = "pro_id";
     private static final String COLUMN_NAMA_KATEGORI = "nama_kategori";
 
     public BookmarkDatabaseHelper(Context context) {
