@@ -63,6 +63,18 @@
                     context.startActivity(intent);
                 }
             });
+            holder.iconImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    System.out.println("KK MODEL: "+kkModel.getNamaKelompokKeahlian());
+                    System.out.println("KK MODELs: "+kkModel.getKey());
+                    ProgramRepository programRepository = ProgramRepository.get();
+                    programRepository.setKk(kkModel.getKey());
+                    Intent intent = new Intent(context, MataKuliah.class);
+                    intent.putExtra("kkModel", kkModel);
+                    context.startActivity(intent);
+                }
+            });
         }
 
         @Override

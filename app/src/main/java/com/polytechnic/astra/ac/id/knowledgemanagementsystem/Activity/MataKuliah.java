@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Repository.KategoriRepository;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Repository.LoginRepository;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Repository.ProgramRepository;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Fragment.KKListFragment;
@@ -20,6 +21,7 @@ import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.ProdiModel;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.ProgramModel;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.R;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.ViewModel.KKViewModel;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.ViewModel.KategoriViewModel;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.ViewModel.ProgramViewModel;
 
 import java.util.ArrayList;
@@ -53,8 +55,9 @@ public class MataKuliah extends AppCompatActivity {
         }
 
         // Initialize Adapter with empty list
-        programListFragment = new ProgramListFragment(new ArrayList<>(), this);
+        programListFragment = new ProgramListFragment(new ArrayList<>(), new ArrayList<>(), this);
         recyclerView.setAdapter(programListFragment);
+
 
         // Initialize ViewModel
         programViewModel = new ViewModelProvider(this).get(ProgramViewModel.class);
@@ -80,6 +83,15 @@ public class MataKuliah extends AppCompatActivity {
                 if (modifiedKey.equals(programModel.getKKID())) {
                     filteredProgramModels.add(programModel);
                 }
+                KategoriViewModel kategoriViewModel = new ViewModelProvider(this).get(KategoriViewModel.class);
+
+                KategoriRepository kategoriRepository = KategoriRepository.get();
+                System.out.println("kategoriRepo : " + programModel.getKey());
+                kategoriRepository.setProdi(programModel.getKey());
+                kategoriViewModel.getListModel().observe(this, kategoriModels -> {
+                    programListFragment.setKategoriModelList(kategoriModels);
+                    programListFragment.notifyDataSetChanged();
+                });
             }
             Log.d("KKViewModel", "Filtered ProgramModels size: " + filteredProgramModels.size());
             programListFragment.setProgramModelList(filteredProgramModels);

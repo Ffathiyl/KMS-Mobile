@@ -34,7 +34,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText usernameEditText;
     private EditText passwordEditText;
     private TextView nama;
-    private Button loginButton;
+    private Button loginButton, materiTersimpan;
     private RecyclerView recyclerView;
     private ProdiListFragment prodiAdapter;
     private ProdiListViewModel prodiViewModel;
@@ -51,6 +51,7 @@ public class LoginActivity extends AppCompatActivity {
         nama = findViewById(R.id.nama);
         logoutButton = findViewById(R.id.logout);
         ImageButton bookmarkButton = findViewById(R.id.bookmark);
+        materiTersimpan = findViewById(R.id.materi_tersimpan);
         bookmarkButton.setTag(false);
 
         LoginModel loginModel = (LoginModel) getIntent().getSerializableExtra("LoginModel");
@@ -98,14 +99,15 @@ public class LoginActivity extends AppCompatActivity {
                 finish();
             }
         });
-//
-//        TextView tv=(TextView)findViewById(R.id.showmore);
-//
-//        tv.setOnClickListener(new View.OnClickListener() {
-//
-//            public void onClick(View v) {
-//                //perform your action here
-//            }
-//        });
+
+        materiTersimpan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LoginActivity.this, MateriTersimpan.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
     }
 }

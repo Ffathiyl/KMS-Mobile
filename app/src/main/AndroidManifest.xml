@@ -32,6 +32,7 @@
         <activity android:name=".Activity.MataKuliah"/>
         <activity android:name=".Activity.Materi"/>
         <activity android:name=".Activity.FileMateri"/>
+        <activity android:name=".Activity.MateriTersimpan"/>
     </application>
 
 </manifest>

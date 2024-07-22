@@ -123,11 +123,11 @@
 
                     <ImageButton
                         android:id="@+id/bookmark"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:background="#0056A6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:src="@drawable/ic_bookmark_fill" />
+                        android:background="#0056A6"
+                        android:src="@drawable/ic_bookmark_empty" />
                 </LinearLayout>
 
                 <LinearLayout

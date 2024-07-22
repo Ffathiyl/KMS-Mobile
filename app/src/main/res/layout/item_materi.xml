@@ -60,11 +60,14 @@
             </LinearLayout>
 
             <ImageButton
+                android:id="@+id/bookmarkButton"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:background="#0056A6"
                 android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_bookmark_empty" />
+                android:src="@drawable/ic_bookmark_empty"
+                android:clickable="true"
+                android:focusable="true"/>
         </LinearLayout>
 
         <LinearLayout

@@ -14,7 +14,10 @@ import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.MateriModel;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import okhttp3.MediaType;
@@ -70,8 +73,22 @@ public class MateriRepository {
                             materi.setFilePdf(materiObject.getString("File_pdf"));
                             materi.setFileVideo(materiObject.getString("File_video"));
                             materi.setKeterangan(materiObject.getString("Keterangan"));
-                            materi.setUploader(materiObject.getString("Uploader").substring(0,10) + " ");
-                            materi.setCreadate(materiObject.getString("Creadate"));
+                            materi.setUploader(materiObject.getString("Uploader"));
+
+                            String originalDateStr = materiObject.getString("Creadate");
+                            SimpleDateFormat originalFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                            SimpleDateFormat targetFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+                            Date date = new Date();
+                            try {
+                                date = originalFormat.parse(originalDateStr);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+
+                            String formattedDateStr = targetFormat.format(date);
+                            materi.setCreadate(formattedDateStr + " ");
+
                             System.out.println("sadljsakd : "+ materi);
                             MateriList.add(materi);
                         }

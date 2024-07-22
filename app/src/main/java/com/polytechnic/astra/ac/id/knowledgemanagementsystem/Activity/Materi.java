@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Repository.KategoriRepository;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Repository.MateriRepository;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Repository.ProgramRepository;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Fragment.KKListFragment;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Fragment.KategoriListFragment;
@@ -22,6 +23,7 @@ import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.ProgramModel;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.R;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.ViewModel.KKViewModel;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.ViewModel.KategoriViewModel;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.ViewModel.MateriViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +52,7 @@ public class Materi extends AppCompatActivity {
         }
 
         // Initialize Adapter with empty list
-        kategoriAdapter = new KategoriListFragment(new ArrayList<>(), this);
+        kategoriAdapter = new KategoriListFragment(new ArrayList<>(), new ArrayList<>(), this);
         recyclerView.setAdapter(kategoriAdapter);
 
         // Initialize ViewModel
@@ -80,6 +82,16 @@ public class Materi extends AppCompatActivity {
                 if (modifiedKey.equals(programModel.getKey())) {
                     filteredKategoriModels.add(kategoriModel);
                 }
+                MateriViewModel materiViewModel = new ViewModelProvider(this).get(MateriViewModel.class);
+
+                MateriRepository materiRepository = MateriRepository.get();
+                System.out.println("mtrRepo : " + kategoriModel.getKey());
+                materiRepository.setKat(kategoriModel.getKey());
+
+                materiViewModel.getListModel().observe(this, materiModels -> {
+                    kategoriAdapter.setMateriModelList(materiModels);
+                    kategoriAdapter.notifyDataSetChanged();
+                });
             }
             Log.d("KKViewModel", "Filtered KategorModels size: " + filteredKategoriModels.size());
             kategoriAdapter.setKategoriModelList(filteredKategoriModels);

@@ -93,4 +93,18 @@ public class KategoriRepository {
             });
             return data;
         }
+
+    public KategoriModel getKategoriByName(String name) {
+        List<KategoriModel> kategoriList = getListKategori().getValue();
+
+        if (kategoriList != null) {
+            for (KategoriModel kategori : kategoriList) {
+                if (kategori.getNamaKategori().equals(name)) {
+                    return kategori;
+                }
+            }
+        }
+        return null;
+    }
+
 }
