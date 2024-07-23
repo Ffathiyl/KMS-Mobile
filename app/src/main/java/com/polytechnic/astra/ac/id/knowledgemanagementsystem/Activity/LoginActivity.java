@@ -18,12 +18,17 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Repository.LoginRepository;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.DBHelper.KategoriDatabaseHelper;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Fragment.KKListFragment;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Fragment.ProdiListFragment;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.MainActivity;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.KategoriModel;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.LoginModel;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.MateriModel;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.R;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.ViewModel.BookmarkViewModel;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.ViewModel.KKViewModel;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.ViewModel.KategoriViewModel;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.ViewModel.ProdiListViewModel;
 
 import java.util.ArrayList;
@@ -33,7 +38,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText usernameEditText;
     private EditText passwordEditText;
-    private TextView nama;
+    private TextView nama, program, materi, author, tanggal;
     private Button loginButton, materiTersimpan;
     private RecyclerView recyclerView;
     private ProdiListFragment prodiAdapter;
@@ -43,12 +48,17 @@ public class LoginActivity extends AppCompatActivity {
     private KKViewModel kkViewModel;
     private ImageButton bookmarkButton;
     private ImageButton logoutButton;
+    private KategoriViewModel kategoriViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home);
         nama = findViewById(R.id.nama);
+        program = findViewById(R.id.titleTextView);
+        materi = findViewById(R.id.programTextView);
+        author = findViewById(R.id.authorTextView);
+        tanggal = findViewById(R.id.dateTextView);
         logoutButton = findViewById(R.id.logout);
         ImageButton bookmarkButton = findViewById(R.id.bookmark);
         materiTersimpan = findViewById(R.id.materi_tersimpan);
@@ -70,6 +80,8 @@ public class LoginActivity extends AppCompatActivity {
         // Initialize ViewModel
         prodiViewModel = new ViewModelProvider(this).get(ProdiListViewModel.class);
 
+
+
         // Observe LiveData from ViewModel
         prodiViewModel.getListModel().observe(this, prodiModels -> {
             // Update adapter with new data
@@ -78,6 +90,29 @@ public class LoginActivity extends AppCompatActivity {
 
         });
 
+        KategoriDatabaseHelper dbHelperKat = new KategoriDatabaseHelper(this);
+
+        kategoriViewModel = new ViewModelProvider(this).get(KategoriViewModel.class);
+
+        kategoriViewModel.getListModel().observe(this, kategoriModels -> {
+            if (kategoriModels != null && !kategoriModels.isEmpty()) {
+                KategoriModel foundMateri = null;
+                for (KategoriModel kategoriModel : kategoriModels) {
+                    if (dbHelperKat.isKategoriExists(kategoriModel.getKey())) {
+                        foundMateri = kategoriModel;
+                        break;
+                    }
+                }
+                if (foundMateri != null) {
+                    System.out.println("foundmater : " + foundMateri);
+                    displayMateriData(foundMateri);
+                } else {
+                    showNoDataMessage();
+                }
+            } else {
+                showNoDataMessage();
+            }
+        });
         bookmarkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -105,9 +140,23 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(LoginActivity.this, MateriTersimpan.class);
                 startActivity(intent);
-                finish();
             }
         });
 
     }
+    private void showNoDataMessage() {
+        tanggal.setText("");
+        author.setText("");
+        program.setText("");
+        materi.setText("");
+    }
+
+    private void displayMateriData(KategoriModel kategoriModel) {
+        program.setText(kategoriModel.getNamaKategori());
+//        materi.setText(materiModel.getKeterangan());
+//        author.setText("Author : " +materiModel.getUploader());
+//        tanggal.setText("Diunggah pada : " +materiModel.getCreadate());
+
+    }
+
 }

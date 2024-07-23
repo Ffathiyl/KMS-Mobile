@@ -18,6 +18,7 @@ import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Repository.Prog
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Activity.FileMateri;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Activity.MataKuliah;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.DBHelper.BookmarkDatabaseHelper;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.DBHelper.KategoriDatabaseHelper;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.KKModel;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.KategoriModel;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.MateriModel;
@@ -59,25 +60,25 @@ public class KategoriListFragment extends RecyclerView.Adapter<KategoriListFragm
     @Override
     public void onBindViewHolder(@NonNull KategoriListFragment.KategoriViewHolder holder, int position) {
         KategoriModel kategoriModel = kategoriModelList.get(position);
-        holder.titleTextView.setText("Materi : " + kategoriModel.getNamaKategori());
+        holder.titleTextView.setText("Program : " + kategoriModel.getNamaKategori());
 
         for (MateriModel materiModel : materiModelList) {
             if (materiModel.getKategori().equals(kategoriModel.getNamaKategori())) {
                 holder.tanggal.setText("Tanggal : " + materiModel.getCreadate());
                 holder.author.setText("Author : " + materiModel.getUploader());
-                holder.program.setText("Program : " + materiModel.getJudulKK());
+                holder.program.setText("Materi : " + materiModel.getJudulKK());
                 break;
             } else {
                 holder.tanggal.setText("Tanggal : ");
                 holder.author.setText("Author : ");
-                holder.program.setText("Program : ");
+                holder.program.setText("Materi : ");
             }
         }
-
+        KategoriDatabaseHelper dbHelperKat = new KategoriDatabaseHelper(context);
         BookmarkDatabaseHelper dbHelper = new BookmarkDatabaseHelper(context);
 
         // Check if the item is bookmarked and update the bookmark button state
-        boolean isBookmarked = dbHelper.isBookmarked(kategoriModel.getNamaKategori());
+        boolean isBookmarked = dbHelper.isBookmarked(kategoriModel.getKey());
         holder.bookmarkButton.setImageResource(isBookmarked ? R.drawable.ic_bookmark_fill : R.drawable.ic_bookmark_empty);
 
         holder.bookmarkButton.setOnClickListener(new View.OnClickListener() {
@@ -96,6 +97,7 @@ public class KategoriListFragment extends RecyclerView.Adapter<KategoriListFragm
         holder.button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                dbHelperKat.addKategori(kategoriModel.getKey());
                 MateriRepository materiRepository = MateriRepository.get();
                 materiRepository.setKat(kategoriModel.getKey());
                 Intent intent = new Intent(context, FileMateri.class);

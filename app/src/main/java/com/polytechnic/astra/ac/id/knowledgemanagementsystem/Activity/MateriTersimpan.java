@@ -49,7 +49,7 @@ public class MateriTersimpan extends AppCompatActivity {
         dbHelper = new BookmarkDatabaseHelper(this);
         kategoriRepository = KategoriRepository.get();
 
-        bookmarkAdapter = new BookmarkAdapter(new ArrayList<>(), this);
+        bookmarkAdapter = new BookmarkAdapter(new ArrayList<>(), new ArrayList<>(), this);
         recyclerView.setAdapter(bookmarkAdapter);
 
         bookmarkViewModel = new ViewModelProvider(this).get(BookmarkViewModel.class);
@@ -61,6 +61,17 @@ public class MateriTersimpan extends AppCompatActivity {
                 System.out.println("ktmodel : " + kategoriModel);
 
                     filteredKategoriModels.add(kategoriModel);
+
+                MateriViewModel materiViewModel = new ViewModelProvider(this).get(MateriViewModel.class);
+
+                MateriRepository materiRepository = MateriRepository.get();
+                System.out.println("mtrRepo : " + kategoriModel.getKey());
+                materiRepository.setKat(kategoriModel.getKey());
+
+                materiViewModel.getListModel().observe(this, materiModels -> {
+                    bookmarkAdapter.setMateriModelList(materiModels);
+                    bookmarkAdapter.notifyDataSetChanged();
+                });
 
             }
             Log.d("KKViewModel", "Filtered KategorModels size: " + filteredKategoriModels.size());

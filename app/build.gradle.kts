@@ -48,4 +48,5 @@ dependencies {
     annotationProcessor ("androidx.room:room-compiler:2.4.3")
     implementation ("androidx.lifecycle:lifecycle-viewmodel:2.4.1")
     implementation ("androidx.lifecycle:lifecycle-livedata:2.4.1")
+    implementation ("com.airbnb.android:lottie:6.1.0")
 }

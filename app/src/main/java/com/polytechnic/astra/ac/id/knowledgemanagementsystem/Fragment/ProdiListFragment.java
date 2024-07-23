@@ -53,8 +53,12 @@ public class ProdiListFragment extends RecyclerView.Adapter<ProdiListFragment.Pr
     public void onBindViewHolder(@NonNull ProdiViewHolder holder, int position) {
         ProdiModel prodiModel = prodiModelList.get(position);
 
-        holder.prodi.setText(prodiModel.getNama());
-
+//        holder.prodi.setText(prodiModel.getNama());
+        if(prodiModel.getNama().length() > 25){
+            holder.prodi.setText(prodiModel.getNama().substring(0, 25) + "...");
+        }else{
+            holder.prodi.setText(prodiModel.getNama());
+        }
         holder.recyclerViewKK.setHasFixedSize(true);
         holder.recyclerViewKK.setLayoutManager(new LinearLayoutManager(context));
 
@@ -67,6 +71,7 @@ public class ProdiListFragment extends RecyclerView.Adapter<ProdiListFragment.Pr
         kkViewModel.getListModel().observe((LifecycleOwner) context, kkModels -> {
             List<KKModel> top2KkModels = new ArrayList<>();
             for (KKModel kkModel : kkModels) {
+                Log.d("KKSS","ISI KK:"+prodiModel.getNama());
                 Log.d("KKViewModel", "KKModel Prodi: " + kkModel.getProdi());
                 if (kkModel.getProdi().equals(prodiModel.getNama())) {
                     top2KkModels.add(kkModel);

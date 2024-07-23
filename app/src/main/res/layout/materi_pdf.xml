@@ -148,13 +148,13 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Preview"
-        android:fontFamily="@font/poppinsemibold"
-        android:textAlignment="center"
-        android:textSize="14sp"
-        android:padding="10dp"/>
+<!--    <TextView-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Preview"-->
+<!--        android:fontFamily="@font/poppinsemibold"-->
+<!--        android:textAlignment="center"-->
+<!--        android:textSize="14sp"-->
+<!--        android:padding="10dp"/>-->
 
 </LinearLayout>
