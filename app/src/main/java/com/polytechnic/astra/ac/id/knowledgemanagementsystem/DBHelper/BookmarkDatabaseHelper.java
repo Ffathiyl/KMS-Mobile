@@ -64,8 +64,6 @@ public class BookmarkDatabaseHelper extends SQLiteOpenHelper {
         return bookmarks;
     }
 
-
-
     public boolean addBookmark(String namaKategori) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();

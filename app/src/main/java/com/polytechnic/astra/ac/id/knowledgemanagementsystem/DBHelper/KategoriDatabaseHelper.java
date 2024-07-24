@@ -21,8 +21,8 @@ public class KategoriDatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + "("
-                + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + COLUMN_KEY + "TEXT"
+                + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + COLUMN_KEY + " TEXT"
                 + ")";
         db.execSQL(CREATE_TABLE);
     }
@@ -57,4 +57,23 @@ public class KategoriDatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return exists;
     }
+    public String getLastKategori() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_NAME, new String[]{COLUMN_KEY},
+                null, null, null, null, COLUMN_ID + " DESC", "1");
+
+        String key = null;
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                int keyIndex = cursor.getColumnIndex(COLUMN_KEY);
+                if (keyIndex != -1) {
+                    key = cursor.getString(keyIndex);
+                }
+            }
+            cursor.close();
+        }
+        db.close();
+        return key;
+    }
+
 }

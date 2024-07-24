@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,6 +19,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Repository.LoginRepository;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Repository.MateriRepository;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.DBHelper.BookmarkDatabaseHelper;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.DBHelper.KategoriDatabaseHelper;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Fragment.KKListFragment;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Fragment.ProdiListFragment;
@@ -30,6 +33,7 @@ import com.polytechnic.astra.ac.id.knowledgemanagementsystem.ViewModel.BookmarkV
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.ViewModel.KKViewModel;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.ViewModel.KategoriViewModel;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.ViewModel.ProdiListViewModel;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.ViewModel.RecentViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +52,8 @@ public class LoginActivity extends AppCompatActivity {
     private KKViewModel kkViewModel;
     private ImageButton bookmarkButton;
     private ImageButton logoutButton;
-    private KategoriViewModel kategoriViewModel;
+    private RecentViewModel recentViewModel;
+    private LinearLayout filemateri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,10 +64,10 @@ public class LoginActivity extends AppCompatActivity {
         materi = findViewById(R.id.programTextView);
         author = findViewById(R.id.authorTextView);
         tanggal = findViewById(R.id.dateTextView);
+        filemateri = findViewById(R.id.materi);
         logoutButton = findViewById(R.id.logout);
-        ImageButton bookmarkButton = findViewById(R.id.bookmark);
+        bookmarkButton = findViewById(R.id.bookmark);
         materiTersimpan = findViewById(R.id.materi_tersimpan);
-        bookmarkButton.setTag(false);
 
         LoginModel loginModel = (LoginModel) getIntent().getSerializableExtra("LoginModel");
         if (loginModel != null) {
@@ -81,7 +86,6 @@ public class LoginActivity extends AppCompatActivity {
         prodiViewModel = new ViewModelProvider(this).get(ProdiListViewModel.class);
 
 
-
         // Observe LiveData from ViewModel
         prodiViewModel.getListModel().observe(this, prodiModels -> {
             // Update adapter with new data
@@ -92,14 +96,18 @@ public class LoginActivity extends AppCompatActivity {
 
         KategoriDatabaseHelper dbHelperKat = new KategoriDatabaseHelper(this);
 
-        kategoriViewModel = new ViewModelProvider(this).get(KategoriViewModel.class);
+        recentViewModel = new ViewModelProvider(this).get(RecentViewModel.class);
 
-        kategoriViewModel.getListModel().observe(this, kategoriModels -> {
+        recentViewModel.getListModel().observe(this, kategoriModels -> {
             if (kategoriModels != null && !kategoriModels.isEmpty()) {
                 KategoriModel foundMateri = null;
                 for (KategoriModel kategoriModel : kategoriModels) {
-                    if (dbHelperKat.isKategoriExists(kategoriModel.getKey())) {
+                    String LastData = dbHelperKat.getLastKategori();
+                    System.out.println("fondbhelo: " +LastData);
+                    if (LastData.equals(kategoriModel.getKey())) {
+                        System.out.println("dbhelperkatat: " +dbHelperKat.isKategoriExists(kategoriModel.getKey()));
                         foundMateri = kategoriModel;
+                        System.out.println("fndmtr : " + foundMateri);
                         break;
                     }
                 }
@@ -113,18 +121,7 @@ public class LoginActivity extends AppCompatActivity {
                 showNoDataMessage();
             }
         });
-        bookmarkButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                boolean isBookmarked = (boolean) bookmarkButton.getTag();
-                if (isBookmarked) {
-                    bookmarkButton.setImageResource(R.drawable.ic_bookmark_empty);
-                } else {
-                    bookmarkButton.setImageResource(R.drawable.ic_bookmark_fill);
-                }
-                bookmarkButton.setTag(!isBookmarked);
-            }
-        });
+
 
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -152,10 +149,38 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void displayMateriData(KategoriModel kategoriModel) {
-        program.setText(kategoriModel.getNamaKategori());
+        BookmarkDatabaseHelper dbHelper = new BookmarkDatabaseHelper(this);
+
+        program.setText("Program : " + kategoriModel.getNamaKategori());
 //        materi.setText(materiModel.getKeterangan());
 //        author.setText("Author : " +materiModel.getUploader());
 //        tanggal.setText("Diunggah pada : " +materiModel.getCreadate());
+        boolean isBookmarked = dbHelper.isBookmarked(kategoriModel.getKey());
+        bookmarkButton.setImageResource(isBookmarked ? R.drawable.ic_bookmark_fill : R.drawable.ic_bookmark_empty);
+
+        bookmarkButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (dbHelper.isBookmarked(kategoriModel.getKey())) {
+                    dbHelper.removeBookmark(kategoriModel.getKey());
+                    bookmarkButton.setImageResource(R.drawable.ic_bookmark_empty);
+                } else {
+                    dbHelper.addBookmark(kategoriModel.getKey());
+                    bookmarkButton.setImageResource(R.drawable.ic_bookmark_fill);
+                }
+            }
+        });
+
+        filemateri.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MateriRepository materiRepository = MateriRepository.get();
+                materiRepository.setKat(kategoriModel.getKey());
+                Intent intent = new Intent(LoginActivity.this, FileMateri.class);
+                intent.putExtra("kategoriModel", kategoriModel);
+                startActivity(intent);
+            }
+        });
 
     }
 

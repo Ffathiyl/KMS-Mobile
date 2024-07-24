@@ -84,8 +84,8 @@ public class KategoriListFragment extends RecyclerView.Adapter<KategoriListFragm
         holder.bookmarkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (dbHelper.isBookmarked(kategoriModel.getNamaKategori())) {
-                    dbHelper.removeBookmark(kategoriModel.getNamaKategori());
+                if (dbHelper.isBookmarked(kategoriModel.getKey())) {
+                    dbHelper.removeBookmark(kategoriModel.getKey());
                     holder.bookmarkButton.setImageResource(R.drawable.ic_bookmark_empty);
                 } else {
                     dbHelper.addBookmark(kategoriModel.getKey());
@@ -98,6 +98,7 @@ public class KategoriListFragment extends RecyclerView.Adapter<KategoriListFragm
             @Override
             public void onClick(View v) {
                 dbHelperKat.addKategori(kategoriModel.getKey());
+                System.out.println("dbhelperkat : " + dbHelperKat.isKategoriExists(kategoriModel.getKey()));
                 MateriRepository materiRepository = MateriRepository.get();
                 materiRepository.setKat(kategoriModel.getKey());
                 Intent intent = new Intent(context, FileMateri.class);

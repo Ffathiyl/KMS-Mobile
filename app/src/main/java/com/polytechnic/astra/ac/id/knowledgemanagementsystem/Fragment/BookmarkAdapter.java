@@ -75,8 +75,8 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
         holder.bookmarkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (dbHelper.isBookmarked(kategoriModel.getNamaKategori())) {
-                    dbHelper.removeBookmark(kategoriModel.getNamaKategori());
+                if (dbHelper.isBookmarked(kategoriModel.getKey())) {
+                    dbHelper.removeBookmark(kategoriModel.getKey());
                     holder.bookmarkButton.setImageResource(R.drawable.ic_bookmark_empty);
                 } else {
                     dbHelper.addBookmark(kategoriModel.getKey());
