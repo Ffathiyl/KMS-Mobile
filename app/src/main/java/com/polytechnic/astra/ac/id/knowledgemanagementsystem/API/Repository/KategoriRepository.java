@@ -65,7 +65,7 @@ public class KategoriRepository {
             Log.d(TAG, "Refreshing data...");
         }
 
-        RequestBody body = RequestBody.create(MediaType.parse("application/json"), "{ \"page\": 1, \"query\": \"\", \"sort\": \"[Nama Kategori] asc\", \"Status\": \"Aktif\", \"Program\": \"" + pro + "\" }");
+        RequestBody body = RequestBody.create(MediaType.parse("application/json"), "{\"Program\": \"" + pro + "\" }");
         Call<ResponseBody> call = mKategoriService.getDataKategori(body);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -89,9 +89,11 @@ public class KategoriRepository {
                             kategori.setMaterialCount(kategoriObject.getString("MateriCount"));
                             kategori.setProID(kategoriObject.getString("ProID"));
                             KategoriList.add(kategori);
+                            Log.d(TAG, "Kategori added: " + kategori.getNamaKategori()); // Tambahkan log di sini
                         }
                         data.setValue(KategoriList);
                         Log.d(TAG, "Data size: " + KategoriList.size());
+
                     } catch (Exception e) {
                         Log.e(TAG, "Error parsing JSON", e);
                     }
@@ -107,6 +109,7 @@ public class KategoriRepository {
         });
         return data;
     }
+
 
     public MutableLiveData<List<KategoriModel>> getListKategoriById() {
         return getListKategoriById(false); // Initial call without refresh
@@ -235,9 +238,8 @@ public class KategoriRepository {
         });
     }
 
-    public void deleteBookmark(String kat, String kry) {
-        System.out.println("TESTOD:"+ kat);
-        String jsonBody = "{ \"kategori\": \"" + kat + "\", \"kry\": \"" + kry + "\"}";
+    public void deleteBookmark(String mat, String kry) {
+        String jsonBody = "{ \"kategori\": \"" + mat + "\", \"kry\":\"9656\"}";
         RequestBody body = RequestBody.create(MediaType.parse("application/json"), jsonBody);
 
         Call<ResponseBody> call = mKategoriService.DeleteBookmark(body);
@@ -247,7 +249,7 @@ public class KategoriRepository {
                 if (response.isSuccessful() && response.body() != null) {
                     Log.d("TAG", "Bookmark deleted successfully");
                     if (bookmarkedCategories != null) {
-                        bookmarkedCategories.remove(kat);
+                        bookmarkedCategories.remove(mat);
                     }
                 } else {
                     Log.e("TAG", "Response is not successful or body is null");
@@ -262,28 +264,28 @@ public class KategoriRepository {
     }
 
     public MutableLiveData<List<String>> getBookmark() {
-        LoginModel loginModel = LoginSession.getInstance().getLoginModel();
-        if (loginModel == null) {
-            Log.e(TAG, "LoginModel is null");
-            MutableLiveData<List<String>> data = new MutableLiveData<>();
-            data.setValue(new ArrayList<>()); // Return empty list
-            return data;
-        }
-
-        String kry = loginModel.getKryId();
-        if (kry == null || kry.isEmpty()) {
-            Log.e(TAG, "kry_id is null or empty");
-            MutableLiveData<List<String>> data = new MutableLiveData<>();
-            data.setValue(new ArrayList<>()); // Return empty list
-            return data;
-        }
-
-        Log.d(TAG, "TITIKRY: " + kry);
+//        LoginModel loginModel = LoginSession.getInstance().getLoginModel();
+//        if (loginModel == null) {
+//            Log.e(TAG, "LoginModel is null");
+//            MutableLiveData<List<String>> data = new MutableLiveData<>();
+//            data.setValue(new ArrayList<>()); // Return empty list
+//            return data;
+//        }
+//
+//        String kry = loginModel.getKryId();
+//        if (kry == null || kry.isEmpty()) {
+//            Log.e(TAG, "kry_id is null or empty");
+//            MutableLiveData<List<String>> data = new MutableLiveData<>();
+//            data.setValue(new ArrayList<>()); // Return empty list
+//            return data;
+//        }
+//
+//        Log.d(TAG, "KRY: " + kry);
 
         MutableLiveData<List<String>> data = new MutableLiveData<>();
         List<String> smpIds = new ArrayList<>();
 
-        String jsonBody = "{\"kry\": \""+kry+"\"}";
+        String jsonBody = "{\"kry\":\"9656\"}";
         RequestBody body = RequestBody.create(MediaType.parse("application/json"), jsonBody);
 
         Call<ResponseBody> call = mKategoriService.GetBookmark(body);
@@ -297,9 +299,8 @@ public class KategoriRepository {
 
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
-                            String smpId = String.valueOf(jsonObject.getInt("matId"));
+                            String smpId = String.valueOf(jsonObject.getString("matId"));
                             smpIds.add(smpId);
-                            System.out.println("TETEK:"+ smpId);
                         }
 
                         data.setValue(smpIds);
@@ -323,9 +324,62 @@ public class KategoriRepository {
         return data;
     }
 
-    private void fetchKategoriBySmpId(Integer smpId, KategoriCallback callback) {
-        RequestBody body = RequestBody.create(MediaType.parse("application/json"), "{ \"smpId\": " + smpId + " }");
-        Call<ResponseBody> call = mKategoriService.GetBookmark(body);
+
+    public boolean getBooked(String key) {
+        return bookmarkedCategories.contains(key);
+    }
+
+    public void createRecent(String kat, String kry) {
+        String jsonBody = "{ \"kategori\": \"" + kat + "\", \"kry\": \"9656\"}";
+        RequestBody body = RequestBody.create(MediaType.parse("application/json"), jsonBody);
+
+        Call<ResponseBody> call = mKategoriService.CreateRecent(body);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Log.d("TAG", "Bookmark created successfully");
+                    if (bookmarkedCategories != null && !bookmarkedCategories.contains(kat)) {
+                        bookmarkedCategories.add(kat);
+                    }
+                } else {
+                    Log.e("TAG", "Response is not successful or body is null");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.e("Error API call: ", t.getMessage());
+            }
+        });
+    }
+
+    public MutableLiveData<List<String>> getRecent() {
+        LoginModel loginModel = LoginSession.getInstance().getLoginModel();
+        if (loginModel == null) {
+            Log.e(TAG, "LoginModel is null");
+            MutableLiveData<List<String>> data = new MutableLiveData<>();
+            data.setValue(new ArrayList<>()); // Return empty list
+            return data;
+        }
+
+        String kry = loginModel.getKryId();
+        if (kry == null || kry.isEmpty()) {
+            Log.e(TAG, "kry_id is null or empty");
+            MutableLiveData<List<String>> data = new MutableLiveData<>();
+            data.setValue(new ArrayList<>()); // Return empty list
+            return data;
+        }
+
+        Log.d(TAG, "KRY: " + kry);
+
+        MutableLiveData<List<String>> data = new MutableLiveData<>();
+        List<String> smpIds = new ArrayList<>();
+
+        String jsonBody = "{\"kry\": \""+kry+"\"}";
+        RequestBody body = RequestBody.create(MediaType.parse("application/json"), jsonBody);
+
+        Call<ResponseBody> call = mKategoriService.GetRecent(body);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -334,40 +388,30 @@ public class KategoriRepository {
                         String jsonString = response.body().string();
                         JSONArray jsonArray = new JSONArray(jsonString);
 
-                        List<KategoriModel> kategoriList = new ArrayList<>();
                         for (int i = 0; i < jsonArray.length(); i++) {
-                            JSONObject kategoriObject = jsonArray.getJSONObject(i);
-                            KategoriModel kategori = new KategoriModel();
-                            kategori.setKey(kategoriObject.getString("matId"));
-                            kategori.setNamaKategori(kategoriObject.getString("matId"));
-                            if (kategoriObject.getString("Deskripsi").length() > 30) {
-                                kategori.setDeskripsi(kategoriObject.getString("Deskripsi").substring(0, 20) + " ...");
-                            } else {
-                                kategori.setDeskripsi(kategoriObject.getString("Deskripsi"));
-                            }
-                            kategori.setProID(kategoriObject.getString("kryId"));
-                            kategoriList.add(kategori);
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            String smpId = String.valueOf(jsonObject.getInt("matId"));
+                            smpIds.add(smpId);
                         }
-                        callback.onSuccess(kategoriList);
+
+                        data.setValue(smpIds);
                     } catch (Exception e) {
                         Log.e(TAG, "Error parsing JSON", e);
-                        callback.onFailure(e);
+                        data.setValue(new ArrayList<>()); // Ensure data is set even if parsing fails
                     }
                 } else {
                     Log.e(TAG, "Response is not successful or body is null");
-                    callback.onFailure(new Exception("Response is not successful or body is null"));
+                    data.setValue(new ArrayList<>()); // Ensure data is set even if API response fails
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.e("Error API call : ", t.getMessage());
-                callback.onFailure(t);
+                Log.e("Error API call: ", t.getMessage());
+                data.setValue(new ArrayList<>()); // Ensure data is set even if API call fails
             }
         });
-    }
 
-    public boolean getBooked(String key) {
-        return bookmarkedCategories.contains(key);
+        return data;
     }
 }

@@ -75,7 +75,7 @@ public class ProgramRepository {
                             }
 //                            kk.setDeskripsi(kkObject.getString("Deskripsi"));
                             ProgramList.add(programModel);
-                            System.out.println("SSSSSSSSSS : "+ProgramList);
+//                            System.out.println("SSSSSSSSSS : "+ProgramList);
                         }
                         data.setValue(ProgramList);
                         Log.d(TAG, "Data size: " + ProgramList.size());

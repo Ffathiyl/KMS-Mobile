@@ -11,4 +11,9 @@ public interface MateriService {
     Call<ResponseBody> getDataMateri(
             @Body RequestBody body
     );
+
+    @POST("Materis/GetDataMateriById")
+    Call<ResponseBody> getDataMateriById(
+            @Body RequestBody body
+    );
 }

@@ -10,15 +10,17 @@ import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.MateriModel;
 
 import java.util.List;
 
-public class BookmarkViewModel extends ViewModel {
-    private MutableLiveData<List<MateriModel>> mMyModelListMutableLiveData;
+public class RecentViewModel extends ViewModel {
+    private MutableLiveData<MateriModel> mMyModelListMutableLiveData;
     private MateriRepository materiRepository;
-    public BookmarkViewModel(){
-        materiRepository = MateriRepository.get();
 
-        mMyModelListMutableLiveData = materiRepository.getListMateriTersimpan();
+    public RecentViewModel() {
+        materiRepository = MateriRepository.get();
     }
-    public MutableLiveData<List<MateriModel>> getListModel(){
+
+    public MutableLiveData<MateriModel> getListModel() {
+        // Load the most recent data every time this method is called
+        mMyModelListMutableLiveData = materiRepository.getListRecent();
         return mMyModelListMutableLiveData;
     }
 }

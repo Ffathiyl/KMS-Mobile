@@ -61,6 +61,7 @@
                     Intent intent = new Intent(context, MataKuliah.class);
                     intent.putExtra("kkModel", kkModel);
                     context.startActivity(intent);
+
                 }
             });
             holder.iconImageView.setOnClickListener(new View.OnClickListener() {
