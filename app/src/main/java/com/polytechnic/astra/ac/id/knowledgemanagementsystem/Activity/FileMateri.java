@@ -60,6 +60,7 @@ public class FileMateri extends AppCompatActivity {
     private KategoriModel kategoriModel;
     private ExoPlayer player;
     private PlayerView playerView;
+    private MateriModel materiModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,30 +75,36 @@ public class FileMateri extends AppCompatActivity {
         unduh = findViewById(R.id.unduh);
         back = findViewById(R.id.back);
 
-        kategoriModel = (KategoriModel) getIntent().getSerializableExtra("kategoriModel");
+//        kategoriModel = (KategoriModel) getIntent().getSerializableExtra("kategoriModel");
 
-        materiViewModel = new ViewModelProvider(this).get(MateriViewModel.class);
+        materiModel = (MateriModel) getIntent().getSerializableExtra("materiModel");
 
-        materiViewModel.loadMateri();
+        if (materiModel != null) {
+            displayMateriData(materiModel);
+        }
 
-        materiViewModel.getListModel().observe(this, materiModels -> {
-            if (materiModels != null && !materiModels.isEmpty()) {
-                MateriModel foundMateri = null;
-                for (MateriModel materiModel : materiModels) {
-                    if (materiModel.getKategori().equals(kategoriModel.getNamaKategori())) {
-                        foundMateri = materiModel;
-                        break;
-                    }
-                }
-                if (foundMateri != null) {
-                    displayMateriData(foundMateri);
-                } else {
-                    showNoDataMessage();
-                }
-            } else {
-                showNoDataMessage();
-            }
-        });
+//        materiViewModel = new ViewModelProvider(this).get(MateriViewModel.class);
+//
+//        materiViewModel.loadMateri();
+//
+//        materiViewModel.getListModel().observe(this, materiModels -> {
+//            if (materiModels != null && !materiModels.isEmpty()) {
+//                MateriModel foundMateri = null;
+//                for (MateriModel materiModel : materiModels) {
+//                    if (materiModel.getKategori().equals(kategoriModel.getNamaKategori())) {
+//                        foundMateri = materiModel;
+//                        break;
+//                    }
+//                }
+//                if (foundMateri != null) {
+//                    displayMateriData(foundMateri);
+//                } else {
+//                    showNoDataMessage();
+//                }
+//            } else {
+//                showNoDataMessage();
+//            }
+//        });
 
         back.setOnClickListener(v -> finish());
 

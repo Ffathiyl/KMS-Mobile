@@ -57,12 +57,7 @@ public class ProdiRepository {
                             JSONObject prodiObject = jsonArray.getJSONObject(i);
                             ProdiModel prodi = new ProdiModel();
                             prodi.setId(prodiObject.getString("Value"));
-//                            prodi.setNama(prodiObject.getString("Text"));
-                            if(prodiObject.getString("Text").length() > 50){
-                                prodi.setNama(prodiObject.getString("Text").substring(0,22)+ " ...");
-                            }else{
-                                prodi.setNama(prodiObject.getString("Text"));
-                            }
+                            prodi.setNama(prodiObject.getString("Text"));
                             prodiList.add(prodi);
                         }
                         data.setValue(prodiList);

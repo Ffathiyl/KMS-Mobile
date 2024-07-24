@@ -17,6 +17,8 @@ import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Fragment.KKListFrag
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Fragment.ProdiListFragment;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.MainActivity;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.KKModel;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.LoginModel;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.LoginSession;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.ProdiModel;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.R;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.ViewModel.KKViewModel;
@@ -74,7 +76,11 @@ public class ProgramKeilmuan extends AppCompatActivity {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                LoginModel loginModel = LoginSession.getInstance().getLoginModel();
+
+                Intent intent = new Intent(ProgramKeilmuan.this, LoginActivity.class);
+                intent.putExtra("LoginModel", loginModel);
+                startActivity(intent);
             }
         });
     }

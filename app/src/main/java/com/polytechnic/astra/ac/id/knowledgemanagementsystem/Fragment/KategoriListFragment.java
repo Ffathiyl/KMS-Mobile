@@ -31,21 +31,12 @@ import java.util.List;
 
 public class KategoriListFragment extends RecyclerView.Adapter<KategoriListFragment.KategoriViewHolder> {
 
-    private List<KategoriModel> kategoriModelList;
-
     private List<MateriModel> materiModelList;
     private Context context;
 
-    public KategoriListFragment(List<KategoriModel> kategoriModelList, List<MateriModel> materiModelList, Context context) {
-        this.kategoriModelList = kategoriModelList;
+    public KategoriListFragment(List<MateriModel> materiModelList, Context context) {
         this.materiModelList = materiModelList;
         this.context = context;
-    }
-
-
-    public void setKategoriModelList(List<KategoriModel> kategoriModelList) {
-        this.kategoriModelList = kategoriModelList;
-        notifyDataSetChanged();
     }
 
     public void setMateriModelList(List<MateriModel> materiModelList){
@@ -62,58 +53,45 @@ public class KategoriListFragment extends RecyclerView.Adapter<KategoriListFragm
 
     @Override
     public void onBindViewHolder(@NonNull KategoriListFragment.KategoriViewHolder holder, int position) {
-        KategoriModel kategoriModel = kategoriModelList.get(position);
-        holder.titleTextView.setText("Program : " + kategoriModel.getNamaKategori());
+        MateriModel materiModel = materiModelList.get(position);
+        holder.titleTextView.setText("" + materiModel.getJudulKK());
+        holder.tanggal.setText("Tanggal : " + materiModel.getCreadate());
+        holder.author.setText("Author : " + materiModel.getUploader());
+        holder.program.setText("Kategori : " + materiModel.getKategori());
 
-        for (MateriModel materiModel : materiModelList) {
-            if (materiModel.getKategori().equals(kategoriModel.getNamaKategori())) {
-                holder.tanggal.setText("Tanggal : " + materiModel.getCreadate());
-                holder.author.setText("Author : " + materiModel.getUploader());
-                holder.program.setText("Materi : " + materiModel.getJudulKK());
-                break;
-            } else {
-                holder.tanggal.setText("Tanggal : ");
-                holder.author.setText("Author : ");
-                holder.program.setText("Materi : ");
-            }
-        }
-        KategoriDatabaseHelper dbHelperKat = new KategoriDatabaseHelper(context);
-        BookmarkDatabaseHelper dbHelper = new BookmarkDatabaseHelper(context);
+        MateriRepository materiRepository = MateriRepository.get();
 
-        // Check if the item is bookmarked and update the bookmark button state
-        boolean isBookmarked = dbHelper.isBookmarked(kategoriModel.getKey());
-        holder.bookmarkButton.setImageResource(isBookmarked ? R.drawable.ic_bookmark_fill : R.drawable.ic_bookmark_empty);
+        LoginModel loginModel = LoginSession.getInstance().getLoginModel();
+
+        holder.bookmarkButton.setImageResource(materiModel.isBookmark() ? R.drawable.ic_bookmark_fill : R.drawable.ic_bookmark_empty);
 
         holder.bookmarkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LoginModel loginModel = LoginSession.getInstance().getLoginModel();
                 if (loginModel != null) {
-                    KategoriRepository kategoriRepository = KategoriRepository.get();
-                    System.out.println("BIJIG:" + loginModel.getKryId());
-                    System.out.println("BIJIG2:" + kategoriModel.getKey());
-                    kategoriRepository.createBookmark(kategoriModel.getKey(), loginModel.getKryId());
+                    if (materiModel.isBookmark()) {
+                        // Hapus bookmark
+                        materiRepository.deleteBookmark(materiModel.getKey(), loginModel.getKryId());
+                        holder.bookmarkButton.setImageResource(R.drawable.ic_bookmark_empty);
+                    } else {
+                        // Tambah bookmark
+                        materiRepository.createBookmark(materiModel.getKey(), loginModel.getKryId());
+                        holder.bookmarkButton.setImageResource(R.drawable.ic_bookmark_fill);
+                    }
                 } else {
                     Log.e("Bookmark", "LoginModel is null");
                 }
-//                if (dbHelper.isBookmarked(kategoriModel.getNamaKategori())) {
-//                    dbHelper.removeBookmark(kategoriModel.getNamaKategori());
-//                    holder.bookmarkButton.setImageResource(R.drawable.ic_bookmark_empty);
-//                } else {
-//                    dbHelper.addBookmark(kategoriModel.getKey());
-//                    holder.bookmarkButton.setImageResource(R.drawable.ic_bookmark_fill);
-//                }
             }
         });
 
         holder.button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dbHelperKat.addKategori(kategoriModel.getKey());
-                MateriRepository materiRepository = MateriRepository.get();
-                materiRepository.setKat(kategoriModel.getKey());
+                KategoriRepository kategoriRepository = KategoriRepository.get();
+                kategoriRepository.createRecent(materiModel.getKey(), loginModel.getKryId());
+
                 Intent intent = new Intent(context, FileMateri.class);
-                intent.putExtra("kategoriModel", kategoriModel);
+                intent.putExtra("materiModel", materiModel);
                 context.startActivity(intent);
             }
         });
@@ -122,7 +100,7 @@ public class KategoriListFragment extends RecyclerView.Adapter<KategoriListFragm
 
     @Override
     public int getItemCount() {
-        return kategoriModelList != null ? kategoriModelList.size() : 0;
+        return materiModelList != null ? materiModelList.size() : 0;
     }
 
     public static class KategoriViewHolder extends RecyclerView.ViewHolder {
@@ -144,5 +122,4 @@ public class KategoriListFragment extends RecyclerView.Adapter<KategoriListFragm
         }
 
     }
-
 }

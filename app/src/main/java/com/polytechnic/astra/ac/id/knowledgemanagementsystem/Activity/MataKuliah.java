@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Repository.KategoriRepository;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Repository.LoginRepository;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Repository.MateriRepository;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Repository.ProgramRepository;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Fragment.KKListFragment;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Fragment.ProgramListFragment;
@@ -22,6 +23,7 @@ import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.ProgramModel;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.R;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.ViewModel.KKViewModel;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.ViewModel.KategoriViewModel;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.ViewModel.MateriViewModel;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.ViewModel.ProgramViewModel;
 
 import java.util.ArrayList;
@@ -66,28 +68,42 @@ public class MataKuliah extends AppCompatActivity {
         ProgramRepository programRepository = ProgramRepository.get();
         System.out.println(": "+kkModel.getKey());
         programRepository.setKk(kkModel.getKey());
+
         programViewModel.getListModel().observe(this, programModels -> {
             // Update adapter with new data
             List<ProgramModel> filteredProgramModels = new ArrayList<>();
             for (ProgramModel programModel : programModels) {
-                String modifiedKey;
-                if(kkModel.getKey().length() == 1){
-                    modifiedKey = "00" + kkModel.getKey();
-                    Log.d("Tag", "Key " + modifiedKey);
-                }else if(kkModel.getKey().length() == 2){
-                    modifiedKey = "0" + kkModel.getKey();
-                    Log.d("Tag", "Key " + modifiedKey);
-                }else {
-                    modifiedKey = kkModel.getKey();
-                }
-                if (modifiedKey.equals(programModel.getKKID())) {
-                    filteredProgramModels.add(programModel);
-                }
+//                System.out.println("PROGRAMMODEL_KKID " + programModel.getKKID());
+//                String modifiedKey;
+//                if(kkModel.getKey().length() == 1){
+//                    modifiedKey = "00" + kkModel.getKey();
+//                    Log.d("Tag", "Key " + modifiedKey);
+//                }else if(kkModel.getKey().length() == 2){
+//                    modifiedKey = "0" + kkModel.getKey();
+//                    Log.d("Tag", "Key " + modifiedKey);
+//                }else {
+//                    modifiedKey = kkModel.getKey();
+//                }
+//                if (modifiedKey.equals(programModel.getKKID())) {
+//                    filteredProgramModels.add(programModel);
+//                }
+//                KategoriViewModel kategoriViewModel = new ViewModelProvider(this).get(KategoriViewModel.class);
+//
+//                KategoriRepository kategoriRepository = KategoriRepository.get();
+//                System.out.println("kategoriRepo : " + programModel.getKey());
+//                kategoriRepository.setProdi(programModel.getKey());
+//                kategoriViewModel.getListModel().observe(this, kategoriModels -> {
+//                    programListFragment.setKategoriModelList(kategoriModels);
+//                    programListFragment.notifyDataSetChanged();
+//                });
+                filteredProgramModels.add(programModel);
+
                 KategoriViewModel kategoriViewModel = new ViewModelProvider(this).get(KategoriViewModel.class);
 
                 KategoriRepository kategoriRepository = KategoriRepository.get();
-                System.out.println("kategoriRepo : " + programModel.getKey());
+                System.out.println("mtrRepo : " + programModel.getKey());
                 kategoriRepository.setProdi(programModel.getKey());
+
                 kategoriViewModel.getListModel().observe(this, kategoriModels -> {
                     programListFragment.setKategoriModelList(kategoriModels);
                     programListFragment.notifyDataSetChanged();
@@ -96,7 +112,6 @@ public class MataKuliah extends AppCompatActivity {
             Log.d("KKViewModel", "Filtered ProgramModels size: " + filteredProgramModels.size());
             programListFragment.setProgramModelList(filteredProgramModels);
             programListFragment.notifyDataSetChanged();
-
         });
 
         back.setOnClickListener(new View.OnClickListener() {

@@ -2,6 +2,7 @@ package com.polytechnic.astra.ac.id.knowledgemanagementsystem.Fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +18,10 @@ import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Repository.Logi
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Repository.MateriRepository;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Activity.FileMateri;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.DBHelper.BookmarkDatabaseHelper;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.DBHelper.KategoriDatabaseHelper;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.KategoriModel;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.LoginModel;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.LoginSession;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.MateriModel;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.R;
 
@@ -55,6 +59,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
         KategoriModel kategoriModel = kategoriModelList.get(position);
         holder.titleTextView.setText("Program : " + kategoriModel.getNamaKategori());
 
+        // Cari MateriModel yang sesuai dengan KategoriModel
         for (MateriModel materiModel : materiModelList) {
             if (materiModel.getKategori().equals(kategoriModel.getNamaKategori())) {
                 holder.tanggal.setText("Tanggal : " + materiModel.getCreadate());
@@ -68,30 +73,43 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
             }
         }
 
+        KategoriDatabaseHelper dbHelperKat = new KategoriDatabaseHelper(context);
+        KategoriRepository kategoriRepository = KategoriRepository.get();
+        LoginModel loginModel = LoginSession.getInstance().getLoginModel();
         BookmarkDatabaseHelper dbHelper = new BookmarkDatabaseHelper(context);
 
-        // Check if the item is bookmarked and update the bookmark button state
+        // Periksa apakah item sudah di-bookmark dan perbarui status ikon bookmark
         boolean isBookmarked = dbHelper.isBookmarked(kategoriModel.getKey());
         holder.bookmarkButton.setImageResource(isBookmarked ? R.drawable.ic_bookmark_fill : R.drawable.ic_bookmark_empty);
 
         holder.bookmarkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                KategoriRepository kategoriRepository = KategoriRepository.get();
+                if (loginModel != null) {
+                    // Dapatkan status saat ini
+                    boolean currentStatus = dbHelper.isBookmarked(kategoriModel.getKey());
 
-//                if (dbHelper.isBookmarked(kategoriModel.getNamaKategori())) {
-//                    dbHelper.removeBookmark(kategoriModel.getNamaKategori());
-//                    holder.bookmarkButton.setImageResource(R.drawable.ic_bookmark_empty);
-//                } else {
-//                    dbHelper.addBookmark(kategoriModel.getKey());
-//                    holder.bookmarkButton.setImageResource(R.drawable.ic_bookmark_fill);
-//                }
+                    if (currentStatus) {
+                        // Hapus bookmark
+                        kategoriRepository.deleteBookmark(kategoriModel.getKey(), loginModel.getKryId());
+                        dbHelper.removeBookmark(kategoriModel.getKey()); // Hapus dari database lokal
+                        holder.bookmarkButton.setImageResource(R.drawable.ic_bookmark_empty);
+                    } else {
+                        // Tambah bookmark
+                        kategoriRepository.createBookmark(kategoriModel.getKey(), loginModel.getKryId());
+                        dbHelper.addBookmark(kategoriModel.getKey()); // Tambah ke database lokal
+                        holder.bookmarkButton.setImageResource(R.drawable.ic_bookmark_fill);
+                    }
+                } else {
+                    Log.e("Bookmark", "LoginModel is null");
+                }
             }
         });
 
         holder.button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                dbHelperKat.addKategori(kategoriModel.getKey());
                 MateriRepository materiRepository = MateriRepository.get();
                 materiRepository.setKat(kategoriModel.getKey());
                 Intent intent = new Intent(context, FileMateri.class);
