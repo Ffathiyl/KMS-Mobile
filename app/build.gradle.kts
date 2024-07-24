@@ -22,6 +22,9 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
+    buildFeatures {
+        buildConfig = true
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -48,5 +51,9 @@ dependencies {
     annotationProcessor ("androidx.room:room-compiler:2.4.3")
     implementation ("androidx.lifecycle:lifecycle-viewmodel:2.4.1")
     implementation ("androidx.lifecycle:lifecycle-livedata:2.4.1")
+    implementation ("androidx.media3:media3-exoplayer:1.1.0")
+    implementation ("androidx.media3:media3-exoplayer-dash:1.1.0")
+    implementation ("androidx.media3:media3-ui:1.1.0")
     implementation ("com.airbnb.android:lottie:6.1.0")
+    implementation ("androidx.core:core:1.10.1")
 }
