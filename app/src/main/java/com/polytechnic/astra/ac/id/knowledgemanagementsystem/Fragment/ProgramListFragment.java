@@ -52,24 +52,26 @@ public class ProgramListFragment extends RecyclerView.Adapter<ProgramListFragmen
     public void onBindViewHolder(@NonNull ProgramListFragment.ProgramViewHolder holder, int position) {
 
         ProgramModel programModel = programModelList.get(position);
-        System.out.println(programModel.getNamaProgram());
+        System.out.println("PROGRAM YANG DILEMPAR: " + programModel.getNamaProgram());
 
         holder.JudulMatkul.setText(programModel.getNamaProgram());
         holder.DeskripsiMatkul.setText(programModel.getDeskripsi());
         boolean found = false;
         for (KategoriModel kategoriModel : kategoriModelList) {
-            String kategoriModifiedKey;
-            if (kategoriModel.getKey().length() == 1) {
-                kategoriModifiedKey = "00" + kategoriModel.getKey();
-                Log.d("Tag", "Key " + kategoriModifiedKey);
-            } else if (kategoriModel.getKey().length() == 2) {
-                kategoriModifiedKey = "0" + kategoriModel.getKey();
-                Log.d("Tag", "Key " + kategoriModifiedKey);
-            } else {
-                kategoriModifiedKey = kategoriModel.getKey();
-            }
+//            String kategoriModifiedKey;
+//            if (kategoriModel.getProID().length() == 1) {
+//                kategoriModifiedKey = "00" + kategoriModel.getProID();
+//                Log.d("Tag", "Key " + kategoriModifiedKey);
+//            } else if (kategoriModel.getProID().length() == 2) {
+//                kategoriModifiedKey = "0" + kategoriModel.getProID();
+//                Log.d("Tag", "Key " + kategoriModifiedKey);
+//            } else {
+//                kategoriModifiedKey = kategoriModel.getProID();
+//            }
 
-            if (programModel.getKey().equals(kategoriModifiedKey)) {
+            System.out.println("PROMEK: "+ programModel.getKey());
+            System.out.println("PROMOD: "+ kategoriModel.getProID());
+            if (programModel.getKey().equals(kategoriModel.getProID())) {
                 holder.totalMateri.setText("Total: " + kategoriModel.getMaterialCount() + " Materi");
                 found = true;
                 break;

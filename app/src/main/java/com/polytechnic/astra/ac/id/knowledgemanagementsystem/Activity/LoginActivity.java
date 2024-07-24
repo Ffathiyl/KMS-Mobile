@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,18 +19,22 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Repository.LoginRepository;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Repository.MateriRepository;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.DBHelper.KategoriDatabaseHelper;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Fragment.KKListFragment;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Fragment.KategoriListFragment;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Fragment.ProdiListFragment;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.MainActivity;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.KategoriModel;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.LoginModel;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.LoginSession;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.MateriModel;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.R;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.ViewModel.BookmarkViewModel;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.ViewModel.KKViewModel;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.ViewModel.KategoriViewModel;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.ViewModel.ProdiListViewModel;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.ViewModel.RecentViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,107 +48,89 @@ public class LoginActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ProdiListFragment prodiAdapter;
     private ProdiListViewModel prodiViewModel;
+    private RecentViewModel recentViewModel;
+    private KategoriListFragment kategoriListFragment;
     private RecyclerView recyclerViewKK;
     private KKListFragment kkAdapter;
     private KKViewModel kkViewModel;
     private ImageButton bookmarkButton;
     private ImageButton logoutButton;
     private KategoriViewModel kategoriViewModel;
+    private LinearLayout fileMateri;
+    private LoginModel loginModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home);
+
         nama = findViewById(R.id.nama);
         program = findViewById(R.id.titleTextView);
         materi = findViewById(R.id.programTextView);
         author = findViewById(R.id.authorTextView);
         tanggal = findViewById(R.id.dateTextView);
         logoutButton = findViewById(R.id.logout);
-        ImageButton bookmarkButton = findViewById(R.id.bookmark);
+        fileMateri = findViewById(R.id.materi);
+        bookmarkButton = findViewById(R.id.bookmark);
         materiTersimpan = findViewById(R.id.materi_tersimpan);
         bookmarkButton.setTag(false);
 
-        LoginModel loginModel = (LoginModel) getIntent().getSerializableExtra("LoginModel");
+        loginModel = (LoginModel) getIntent().getSerializableExtra("LoginModel");
+        System.out.println("LOGINMODEL: " + loginModel.getNama());
         if (loginModel != null) {
             nama.setText("Hai, " + loginModel.getNama());
-        }else{
+        } else {
             nama.setText("Hai, " + loginModel.getNama());
         }
+
         recyclerView = findViewById(R.id.recyclerView2);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Initialize Adapter with empty list
         prodiAdapter = new ProdiListFragment(new ArrayList<>(), this);
         recyclerView.setAdapter(prodiAdapter);
 
-        // Initialize ViewModel
         prodiViewModel = new ViewModelProvider(this).get(ProdiListViewModel.class);
 
+        recentViewModel = new ViewModelProvider(this).get(RecentViewModel.class);
 
-
-        // Observe LiveData from ViewModel
-        prodiViewModel.getListModel().observe(this, prodiModels -> {
-            // Update adapter with new data
-            prodiAdapter.setProdiModelList(prodiModels);
-            prodiAdapter.notifyDataSetChanged();
-
+        logoutButton.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
         });
 
-        KategoriDatabaseHelper dbHelperKat = new KategoriDatabaseHelper(this);
+        materiTersimpan.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, MateriTersimpan.class);
+            startActivity(intent);
+        });
 
-        kategoriViewModel = new ViewModelProvider(this).get(KategoriViewModel.class);
+        observeViewModels();
+    }
 
-        kategoriViewModel.getListModel().observe(this, kategoriModels -> {
-            if (kategoriModels != null && !kategoriModels.isEmpty()) {
-                KategoriModel foundMateri = null;
-                for (KategoriModel kategoriModel : kategoriModels) {
-                    if (dbHelperKat.isKategoriExists(kategoriModel.getKey())) {
-                        foundMateri = kategoriModel;
-                        break;
-                    }
-                }
-                if (foundMateri != null) {
-                    System.out.println("foundmater : " + foundMateri);
-                    displayMateriData(foundMateri);
-                } else {
-                    showNoDataMessage();
-                }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Panggil pemuatan ulang data saat halaman kembali aktif
+        observeViewModels();
+    }
+
+    private void observeViewModels() {
+        // Observe LiveData dari ViewModel
+        prodiViewModel.getListModel().observe(this, prodiModels -> {
+            // Perbarui adapter dengan data baru
+            prodiAdapter.setProdiModelList(prodiModels);
+            prodiAdapter.notifyDataSetChanged();
+        });
+
+        recentViewModel.getListModel().observe(this, materiModel -> {
+            if (materiModel != null) {
+                displayMateriData(materiModel);
             } else {
                 showNoDataMessage();
             }
         });
-        bookmarkButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                boolean isBookmarked = (boolean) bookmarkButton.getTag();
-                if (isBookmarked) {
-                    bookmarkButton.setImageResource(R.drawable.ic_bookmark_empty);
-                } else {
-                    bookmarkButton.setImageResource(R.drawable.ic_bookmark_fill);
-                }
-                bookmarkButton.setTag(!isBookmarked);
-            }
-        });
-
-        logoutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
-
-        materiTersimpan.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this, MateriTersimpan.class);
-                startActivity(intent);
-            }
-        });
-
     }
+
     private void showNoDataMessage() {
         tanggal.setText("");
         author.setText("");
@@ -151,12 +138,40 @@ public class LoginActivity extends AppCompatActivity {
         materi.setText("");
     }
 
-    private void displayMateriData(KategoriModel kategoriModel) {
-        program.setText(kategoriModel.getNamaKategori());
-//        materi.setText(materiModel.getKeterangan());
-//        author.setText("Author : " +materiModel.getUploader());
-//        tanggal.setText("Diunggah pada : " +materiModel.getCreadate());
+    private void displayMateriData(MateriModel materiModel) {
+        MateriRepository materiRepository = MateriRepository.get();
 
+        program.setText(materiModel.getJudulKK());
+        materi.setText("Kategori : " + materiModel.getKategori());
+        author.setText("Author : " + materiModel.getUploader());
+        tanggal.setText("Diunggah pada : " + materiModel.getCreadate());
+
+        System.out.println("HASLSAKBSK: " + materiModel.isBookmark());
+        bookmarkButton.setImageResource(materiModel.isBookmark() ? R.drawable.ic_bookmark_fill : R.drawable.ic_bookmark_empty);
+
+        bookmarkButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (loginModel != null) {
+                    if (materiModel.isBookmark()) {
+                        // Hapus bookmark
+                        materiRepository.deleteBookmark(materiModel.getKey(), loginModel.getKryId());
+                        bookmarkButton.setImageResource(R.drawable.ic_bookmark_empty);
+                    } else {
+                        // Tambah bookmark
+                        materiRepository.createBookmark(materiModel.getKey(), loginModel.getKryId());
+                        bookmarkButton.setImageResource(R.drawable.ic_bookmark_fill);
+                    }
+                } else {
+                    Log.e("Bookmark", "LoginModel is null");
+                }
+            }
+        });
+
+        fileMateri.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, FileMateri.class);
+            intent.putExtra("materiModel", materiModel);
+            startActivity(intent);
+        });
     }
-
 }

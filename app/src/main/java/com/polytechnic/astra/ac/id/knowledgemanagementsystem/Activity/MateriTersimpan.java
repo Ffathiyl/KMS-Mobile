@@ -18,7 +18,9 @@ import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Repository.Mate
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.DBHelper.BookmarkDatabaseHelper;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Fragment.BookmarkAdapter;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Repository.KategoriRepository;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Fragment.KategoriListFragment;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.KategoriModel;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.MateriModel;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.R;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.ViewModel.BookmarkViewModel;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.ViewModel.KategoriViewModel;
@@ -32,10 +34,10 @@ public class MateriTersimpan extends AppCompatActivity {
     private BookmarkAdapter bookmarkAdapter;
     private List<KategoriModel> kategoriModelList = new ArrayList<>();
     private BookmarkDatabaseHelper dbHelper;
-    private KategoriRepository kategoriRepository;
+    private MateriRepository materiRepository;
     private ImageButton back;
     private BookmarkViewModel bookmarkViewModel;
-    String id;
+    private KategoriListFragment kategoriListFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,38 +48,21 @@ public class MateriTersimpan extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        dbHelper = new BookmarkDatabaseHelper(this);
-        kategoriRepository = KategoriRepository.get();
+        materiRepository = MateriRepository.get();
 
-        bookmarkAdapter = new BookmarkAdapter(new ArrayList<>(), new ArrayList<>(), this);
-        recyclerView.setAdapter(bookmarkAdapter);
+        kategoriListFragment = new KategoriListFragment(new ArrayList<>(), this);
+        recyclerView.setAdapter(kategoriListFragment);
 
         bookmarkViewModel = new ViewModelProvider(this).get(BookmarkViewModel.class);
 
         bookmarkViewModel.getListModel().observe(this, bookmarkModels -> {
-            // Update adapter with new data
-            List<KategoriModel> filteredKategoriModels = new ArrayList<>();
-            for (KategoriModel kategoriModel : bookmarkModels) {
-                System.out.println("ktmodel : " + kategoriModel);
-
-                    filteredKategoriModels.add(kategoriModel);
-
-                MateriViewModel materiViewModel = new ViewModelProvider(this).get(MateriViewModel.class);
-
-                MateriRepository materiRepository = MateriRepository.get();
-                System.out.println("mtrRepo : " + kategoriModel.getKey());
-                materiRepository.setKat(kategoriModel.getKey());
-
-                materiViewModel.getListModel().observe(this, materiModels -> {
-                    bookmarkAdapter.setMateriModelList(materiModels);
-                    bookmarkAdapter.notifyDataSetChanged();
-                });
-
+            List<MateriModel> listMateri = new ArrayList<>();
+            for (MateriModel mm : bookmarkModels) {
+                listMateri.add(mm);
             }
-            Log.d("KKViewModel", "Filtered KategorModels size: " + filteredKategoriModels.size());
-            bookmarkAdapter.setKategoriModelList(filteredKategoriModels);
-            bookmarkAdapter.notifyDataSetChanged();
 
+            kategoriListFragment.setMateriModelList(listMateri);
+            kategoriListFragment.notifyDataSetChanged();
         });
 
         back.setOnClickListener(new View.OnClickListener() {

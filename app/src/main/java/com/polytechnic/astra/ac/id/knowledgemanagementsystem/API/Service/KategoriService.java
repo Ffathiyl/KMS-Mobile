@@ -31,4 +31,19 @@ public interface KategoriService {
     Call<ResponseBody> DeleteBookmark(
             @Body RequestBody body
     );
+
+    @POST("KategoriProgram/CreateRecent")
+    Call<ResponseBody> CreateRecent(
+            @Body RequestBody body
+    );
+
+    @POST("KategoriProgram/GetRecent")
+    Call<ResponseBody> GetRecent(
+            @Body RequestBody body
+    );
+
+    @POST("KategoriProgram/DeleteRecent")
+    Call<ResponseBody> DeleteRecent(
+            @Body RequestBody body
+    );
 }

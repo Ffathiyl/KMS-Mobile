@@ -3,10 +3,20 @@ package com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class MateriModel {
+import java.io.Serializable;
+
+public class MateriModel implements Serializable {
     @SerializedName("Key")
     @Expose
     private String Key;
+
+    @SerializedName("Kat_ID")
+    @Expose
+    private String Kat_ID;
+
+    @SerializedName("isBookmark")
+    @Expose
+    private boolean isBookmark;
 
     @SerializedName("Kategori")
     @Expose
@@ -229,5 +239,21 @@ public class MateriModel {
 
     public void setPosttest(String posttest) {
         Posttest = posttest;
+    }
+
+    public String getKat_ID() {
+        return Kat_ID;
+    }
+
+    public void setKat_ID(String kat_ID) {
+        Kat_ID = kat_ID;
+    }
+
+    public boolean isBookmark() {
+        return isBookmark;
+    }
+
+    public void setBookmark(boolean bookmark) {
+        isBookmark = bookmark;
     }
 }
