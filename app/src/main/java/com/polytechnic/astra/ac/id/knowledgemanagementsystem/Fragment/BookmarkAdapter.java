@@ -12,6 +12,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Repository.KategoriRepository;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Repository.LoginRepository;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Repository.MateriRepository;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Activity.FileMateri;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.DBHelper.BookmarkDatabaseHelper;
@@ -75,13 +77,15 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
         holder.bookmarkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (dbHelper.isBookmarked(kategoriModel.getNamaKategori())) {
-                    dbHelper.removeBookmark(kategoriModel.getNamaKategori());
-                    holder.bookmarkButton.setImageResource(R.drawable.ic_bookmark_empty);
-                } else {
-                    dbHelper.addBookmark(kategoriModel.getKey());
-                    holder.bookmarkButton.setImageResource(R.drawable.ic_bookmark_fill);
-                }
+                KategoriRepository kategoriRepository = KategoriRepository.get();
+
+//                if (dbHelper.isBookmarked(kategoriModel.getNamaKategori())) {
+//                    dbHelper.removeBookmark(kategoriModel.getNamaKategori());
+//                    holder.bookmarkButton.setImageResource(R.drawable.ic_bookmark_empty);
+//                } else {
+//                    dbHelper.addBookmark(kategoriModel.getKey());
+//                    holder.bookmarkButton.setImageResource(R.drawable.ic_bookmark_fill);
+//                }
             }
         });
 

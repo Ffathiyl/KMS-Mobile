@@ -2,6 +2,7 @@ package com.polytechnic.astra.ac.id.knowledgemanagementsystem.Fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,8 @@ import com.polytechnic.astra.ac.id.knowledgemanagementsystem.DBHelper.BookmarkDa
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.DBHelper.KategoriDatabaseHelper;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.KKModel;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.KategoriModel;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.LoginModel;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.LoginSession;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.MateriModel;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.R;
 
@@ -84,13 +87,22 @@ public class KategoriListFragment extends RecyclerView.Adapter<KategoriListFragm
         holder.bookmarkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (dbHelper.isBookmarked(kategoriModel.getNamaKategori())) {
-                    dbHelper.removeBookmark(kategoriModel.getNamaKategori());
-                    holder.bookmarkButton.setImageResource(R.drawable.ic_bookmark_empty);
+                LoginModel loginModel = LoginSession.getInstance().getLoginModel();
+                if (loginModel != null) {
+                    KategoriRepository kategoriRepository = KategoriRepository.get();
+                    System.out.println("BIJIG:" + loginModel.getKryId());
+                    System.out.println("BIJIG2:" + kategoriModel.getKey());
+                    kategoriRepository.createBookmark(kategoriModel.getKey(), loginModel.getKryId());
                 } else {
-                    dbHelper.addBookmark(kategoriModel.getKey());
-                    holder.bookmarkButton.setImageResource(R.drawable.ic_bookmark_fill);
+                    Log.e("Bookmark", "LoginModel is null");
                 }
+//                if (dbHelper.isBookmarked(kategoriModel.getNamaKategori())) {
+//                    dbHelper.removeBookmark(kategoriModel.getNamaKategori());
+//                    holder.bookmarkButton.setImageResource(R.drawable.ic_bookmark_empty);
+//                } else {
+//                    dbHelper.addBookmark(kategoriModel.getKey());
+//                    holder.bookmarkButton.setImageResource(R.drawable.ic_bookmark_fill);
+//                }
             }
         });
 

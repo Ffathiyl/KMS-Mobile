@@ -71,8 +71,8 @@ public class ProdiListFragment extends RecyclerView.Adapter<ProdiListFragment.Pr
         kkViewModel.getListModel().observe((LifecycleOwner) context, kkModels -> {
             List<KKModel> top2KkModels = new ArrayList<>();
             for (KKModel kkModel : kkModels) {
-                Log.d("KKSS","ISI KK:"+prodiModel.getNama());
-                Log.d("KKViewModel", "KKModel Prodi: " + kkModel.getProdi());
+//                Log.d("KKSS","ISI KK:"+prodiModel.getNama());
+//                Log.d("KKViewModel", "KKModel Prodi: " + kkModel.getProdi());
                 if (kkModel.getProdi().equals(prodiModel.getNama())) {
                     top2KkModels.add(kkModel);
                     if (top2KkModels.size() == 2) {

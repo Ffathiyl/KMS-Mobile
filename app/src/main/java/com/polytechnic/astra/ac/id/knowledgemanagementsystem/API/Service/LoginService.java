@@ -12,4 +12,9 @@ public interface LoginService {
     Call<ResponseBody> getLogin(
             @Body RequestBody body
     );
+
+    @POST("Utilities/GetUserLogin")
+    Call<ResponseBody> getUserLogin(
+            @Body RequestBody body
+    );
 }

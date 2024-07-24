@@ -13,6 +13,7 @@ import android.widget.EditText;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Repository.LoginRepository;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Activity.LoginActivity;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.LoginModel;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.LoginSession;
 
 import java.util.List;
 
@@ -43,13 +44,19 @@ public class MainActivity extends AppCompatActivity {
         String username = usernameEditText.getText().toString().trim();  // Trim untuk menghilangkan spasi tambahan
 
         LoginRepository loginRepository = LoginRepository.get();
+        loginRepository.getUserLogin(username);
         loginRepository.setUsername(username);
+
         loginRepository.getLogin().observe(this, new Observer<List<LoginModel>>() {
             @Override
             public void onChanged(List<LoginModel> loginModels) {
                 if (loginModels != null && !loginModels.isEmpty()) {
-                    // If data is not empty, navigate to MainActivity
+                    // If data is not empty, save login data and navigate to MainActivity
                     LoginModel loginModel = loginModels.get(0);
+
+                    // Simpan data login ke singleton
+                    LoginSession.getInstance().setLoginModel(loginModel);
+
                     Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                     intent.putExtra("LoginModel", loginModel);
                     startActivity(intent);

@@ -9,6 +9,7 @@ import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.ApiUtils;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Service.LoginService;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Service.ProdiService;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.LoginModel;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.LoginSession;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.ProdiModel;
 
 import org.json.JSONArray;
@@ -92,6 +93,61 @@ public class LoginRepository {
             }
         });
         System.out.println("data LOGIN : "+data);
+        return data;
+    }
+
+    public MutableLiveData<List<LoginModel>> getUserLogin(String username) {
+        MutableLiveData<List<LoginModel>> data = new MutableLiveData<>();
+
+        RequestBody body = RequestBody.create(MediaType.parse("application/json"), "{ \"username\": \"" + username + "\"}");
+        Call<ResponseBody> call = mLoginService.getUserLogin(body);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    try {
+                        String jsonString = response.body().string();
+                        JSONArray jsonArray = new JSONArray(jsonString);
+
+                        List<LoginModel> loginList = new ArrayList<>();
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject prodiObject = jsonArray.getJSONObject(i);
+                            LoginModel prodi = new LoginModel();
+
+                            if (prodiObject.has("RoleID")) {
+                                prodi.setRoleID(prodiObject.getString("RoleID"));
+                            }
+                            if (prodiObject.has("Role")) {
+                                prodi.setRole(prodiObject.getString("Role"));
+                            }
+                            if (prodiObject.has("Nama")) {
+                                prodi.setNama(prodiObject.getString("Nama"));
+                            }
+                            if (prodiObject.has("kry_id")) {
+                                prodi.setKryId(prodiObject.getString("kry_id"));
+                            }
+                            System.out.println("MAKAN TAI: "+prodi.getKryId());
+                            loginList.add(prodi);
+                        }
+                        data.setValue(loginList);
+
+                        if (!loginList.isEmpty()) {
+                            LoginSession.getInstance().setLoginModel(loginList.get(0));
+                        }
+
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error parsing JSON", e);
+                    }
+                } else {
+                    Log.e(TAG, "Response is not successful or body is null");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.e("Error API call: ", t.getMessage());
+            }
+        });
         return data;
     }
 }

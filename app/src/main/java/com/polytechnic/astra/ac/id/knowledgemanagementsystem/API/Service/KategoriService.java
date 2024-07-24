@@ -16,4 +16,19 @@ public interface KategoriService {
     Call<ResponseBody> getDataKategoriById(
             @Body RequestBody body
     );
+
+    @POST("KategoriProgram/CreateBookmark")
+    Call<ResponseBody> CreateBookmark(
+            @Body RequestBody body
+    );
+
+    @POST("KategoriProgram/GetBookmark")
+    Call<ResponseBody> GetBookmark(
+            @Body RequestBody body
+    );
+
+    @POST("KategoriProgram/DeleteBookmark")
+    Call<ResponseBody> DeleteBookmark(
+            @Body RequestBody body
+    );
 }

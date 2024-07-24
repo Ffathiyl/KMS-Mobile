@@ -16,14 +16,21 @@ public class LoginModel implements Serializable {
     private String Role;
 
     @SerializedName("Nama")
-    @Expose String Nama;
+    @Expose
+    private String Nama;
+
+    @SerializedName("kry_id") // Pastikan nama ini sesuai dengan nama field di API
+    @Expose
+    private String kryId;
 
     public LoginModel() {
         this.RoleID = "";
         this.Role = "";
         this.Nama = "";
+        this.kryId = ""; // Inisialisasi dengan string kosong
     }
 
+    // Getter dan Setter
     public String getRoleID() {
         return RoleID;
     }
@@ -46,5 +53,13 @@ public class LoginModel implements Serializable {
 
     public void setNama(String nama) {
         Nama = nama;
+    }
+
+    public String getKryId() {
+        return kryId;
+    }
+
+    public void setKryId(String kryId) {
+        this.kryId = kryId;
     }
 }
