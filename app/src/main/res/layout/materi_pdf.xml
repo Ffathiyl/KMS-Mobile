@@ -148,13 +148,19 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-<!--    <TextView-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="Preview"-->
-<!--        android:fontFamily="@font/poppinsemibold"-->
-<!--        android:textAlignment="center"-->
-<!--        android:textSize="14sp"-->
-<!--        android:padding="10dp"/>-->
+    <Button
+        android:layout_marginStart="50px"
+        android:id="@+id/btn_play_video"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Putar Video" />
+
+    <androidx.media3.ui.PlayerView
+        android:id="@+id/player_view"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_margin="16dp"/>
+
+
 
 </LinearLayout>
