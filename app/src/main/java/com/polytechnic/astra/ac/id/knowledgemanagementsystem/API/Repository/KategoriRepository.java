@@ -7,10 +7,8 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.ApiUtils;
-import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Service.KKService;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Service.KategoriService;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.DBHelper.BookmarkDatabaseHelper;
-import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.KKModel;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.KategoriModel;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.LoginModel;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.LoginSession;
@@ -33,15 +31,16 @@ public class KategoriRepository {
     private static KategoriRepository INSTANCE;
     private BookmarkDatabaseHelper dbHelper;
     private KategoriService mKategoriService;
+    private List<String> bookmarkedCategories = new ArrayList<>();
     private String pro;
-
-    public void setProdi(String pro) {
-        this.pro = pro;
-    }
 
     private KategoriRepository(Context context) {
         mKategoriService = ApiUtils.getKategoriService();
         dbHelper = new BookmarkDatabaseHelper(context);
+    }
+
+    public void setProdi(String pro) {
+        this.pro = pro;
     }
 
     public static void initialize(Context context) {
@@ -55,11 +54,18 @@ public class KategoriRepository {
     }
 
     public MutableLiveData<List<KategoriModel>> getListKategori() {
-        System.out.println("MEMEK: " + pro);
+        return getListKategori(false); // Initial call without refresh
+    }
+
+    public MutableLiveData<List<KategoriModel>> getListKategori(boolean refresh) {
         MutableLiveData<List<KategoriModel>> data = new MutableLiveData<>();
 
+        if (refresh) {
+            // Trigger refresh logic here
+            Log.d(TAG, "Refreshing data...");
+        }
+
         RequestBody body = RequestBody.create(MediaType.parse("application/json"), "{ \"page\": 1, \"query\": \"\", \"sort\": \"[Nama Kategori] asc\", \"Status\": \"Aktif\", \"Program\": \"" + pro + "\" }");
-        System.out.println(body.contentType());
         Call<ResponseBody> call = mKategoriService.getDataKategori(body);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -82,7 +88,6 @@ public class KategoriRepository {
                             }
                             kategori.setMaterialCount(kategoriObject.getString("MateriCount"));
                             kategori.setProID(kategoriObject.getString("ProID"));
-//                            kk.setDeskripsi(kkObject.getString("Deskripsi"));
                             KategoriList.add(kategori);
                         }
                         data.setValue(KategoriList);
@@ -91,7 +96,6 @@ public class KategoriRepository {
                         Log.e(TAG, "Error parsing JSON", e);
                     }
                 } else {
-                    // Tangani kesalahan respon
                     Log.e(TAG, "Response is not successful or body is null");
                 }
             }
@@ -105,9 +109,13 @@ public class KategoriRepository {
     }
 
     public MutableLiveData<List<KategoriModel>> getListKategoriById() {
+        return getListKategoriById(false); // Initial call without refresh
+    }
+
+    public MutableLiveData<List<KategoriModel>> getListKategoriById(boolean refresh) {
         MutableLiveData<List<KategoriModel>> data = new MutableLiveData<>();
         List<KategoriModel> allKategoriList = new ArrayList<>();
-        int[] completedCalls = {0};
+        final int[] completedCalls = {0};
 
         // Ambil daftar kategori yang dibookmark
         MutableLiveData<List<String>> bookmarkedCategoriesLiveData = getBookmark();
@@ -115,17 +123,21 @@ public class KategoriRepository {
             @Override
             public void onChanged(List<String> bookmarkedCategories) {
                 if (bookmarkedCategories != null && !bookmarkedCategories.isEmpty()) {
+                    // Update daftar bookmark
+                    final List<String> finalBookmarkedCategories = new ArrayList<>(bookmarkedCategories);
+                    KategoriRepository.this.bookmarkedCategories = finalBookmarkedCategories;
+
                     // Log isi bookmarkedCategories
-                    Log.d(TAG, "Bookmarked PILIR: " + bookmarkedCategories);
+                    Log.d(TAG, "Bookmarked PILIR: " + finalBookmarkedCategories);
 
                     // Fetch kategori berdasarkan id yang dibookmark
-                    for (String categoryName : bookmarkedCategories) {
+                    for (String categoryName : finalBookmarkedCategories) {
                         fetchKategoriById(categoryName, new KategoriCallback() {
                             @Override
                             public void onSuccess(List<KategoriModel> kategoriList) {
                                 allKategoriList.addAll(kategoriList);
                                 completedCalls[0]++;
-                                if (completedCalls[0] == bookmarkedCategories.size()) {
+                                if (completedCalls[0] == finalBookmarkedCategories.size()) {
                                     data.setValue(allKategoriList);
                                 }
                             }
@@ -133,14 +145,13 @@ public class KategoriRepository {
                             @Override
                             public void onFailure(Throwable t) {
                                 completedCalls[0]++;
-                                if (completedCalls[0] == bookmarkedCategories.size()) {
+                                if (completedCalls[0] == finalBookmarkedCategories.size()) {
                                     data.setValue(allKategoriList); // still update even if some calls fail
                                 }
                             }
                         });
                     }
                 } else {
-                    // Handle case where there are no bookmarked categories
                     data.setValue(new ArrayList<>()); // Return empty list if no categories
                 }
             }
@@ -148,8 +159,6 @@ public class KategoriRepository {
 
         return data;
     }
-
-
 
     private void fetchKategoriById(String categoryName, KategoriCallback callback) {
         RequestBody body = RequestBody.create(MediaType.parse("application/json"), "{ \"page\": \"" + categoryName + "\"}");
@@ -174,7 +183,6 @@ public class KategoriRepository {
                                 kategori.setDeskripsi(kategoriObject.getString("Deskripsi"));
                             }
                             kategori.setProID(kategoriObject.getString("idProgram"));
-                            System.out.println("POLOR:"+kategoriObject.getString("Nama Kategori"));
                             KategoriList.add(kategori);
                         }
                         callback.onSuccess(KategoriList);
@@ -203,19 +211,45 @@ public class KategoriRepository {
     }
 
     public void createBookmark(String kat, String kry) {
-        // Buat JSON request body
         String jsonBody = "{ \"kategori\": \"" + kat + "\", \"kry\": \"" + kry + "\"}";
         RequestBody body = RequestBody.create(MediaType.parse("application/json"), jsonBody);
 
-        // Panggil endpoint createBookmark
         Call<ResponseBody> call = mKategoriService.CreateBookmark(body);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     Log.d("TAG", "Bookmark created successfully");
+                    if (bookmarkedCategories != null && !bookmarkedCategories.contains(kat)) {
+                        bookmarkedCategories.add(kat);
+                    }
                 } else {
-                    // Tangani kesalahan respon
+                    Log.e("TAG", "Response is not successful or body is null");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.e("Error API call: ", t.getMessage());
+            }
+        });
+    }
+
+    public void deleteBookmark(String kat, String kry) {
+        System.out.println("TESTOD:"+ kat);
+        String jsonBody = "{ \"kategori\": \"" + kat + "\", \"kry\": \"" + kry + "\"}";
+        RequestBody body = RequestBody.create(MediaType.parse("application/json"), jsonBody);
+
+        Call<ResponseBody> call = mKategoriService.DeleteBookmark(body);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Log.d("TAG", "Bookmark deleted successfully");
+                    if (bookmarkedCategories != null) {
+                        bookmarkedCategories.remove(kat);
+                    }
+                } else {
                     Log.e("TAG", "Response is not successful or body is null");
                 }
             }
@@ -228,7 +262,6 @@ public class KategoriRepository {
     }
 
     public MutableLiveData<List<String>> getBookmark() {
-        // Ambil LoginModel dari LoginSession
         LoginModel loginModel = LoginSession.getInstance().getLoginModel();
         if (loginModel == null) {
             Log.e(TAG, "LoginModel is null");
@@ -250,11 +283,9 @@ public class KategoriRepository {
         MutableLiveData<List<String>> data = new MutableLiveData<>();
         List<String> smpIds = new ArrayList<>();
 
-        // Format JSON request body
         String jsonBody = "{\"kry\": \""+kry+"\"}";
         RequestBody body = RequestBody.create(MediaType.parse("application/json"), jsonBody);
 
-        // Call API
         Call<ResponseBody> call = mKategoriService.GetBookmark(body);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -266,13 +297,11 @@ public class KategoriRepository {
 
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
-                            // Convert smpId to String
-                            String smpId = String.valueOf(jsonObject.getInt("smpId"));
+                            String smpId = String.valueOf(jsonObject.getInt("matId"));
                             smpIds.add(smpId);
                             System.out.println("TETEK:"+ smpId);
                         }
 
-                        // Update LiveData with the list of smpIds
                         data.setValue(smpIds);
                     } catch (Exception e) {
                         Log.e(TAG, "Error parsing JSON", e);
@@ -294,8 +323,6 @@ public class KategoriRepository {
         return data;
     }
 
-
-
     private void fetchKategoriBySmpId(Integer smpId, KategoriCallback callback) {
         RequestBody body = RequestBody.create(MediaType.parse("application/json"), "{ \"smpId\": " + smpId + " }");
         Call<ResponseBody> call = mKategoriService.GetBookmark(body);
@@ -311,14 +338,14 @@ public class KategoriRepository {
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject kategoriObject = jsonArray.getJSONObject(i);
                             KategoriModel kategori = new KategoriModel();
-                            kategori.setKey(kategoriObject.getString("matId")); // Assuming 'matId' is the key for the category
-                            kategori.setNamaKategori(kategoriObject.getString("matId")); // Assuming 'matId' is used for the name
+                            kategori.setKey(kategoriObject.getString("matId"));
+                            kategori.setNamaKategori(kategoriObject.getString("matId"));
                             if (kategoriObject.getString("Deskripsi").length() > 30) {
                                 kategori.setDeskripsi(kategoriObject.getString("Deskripsi").substring(0, 20) + " ...");
                             } else {
                                 kategori.setDeskripsi(kategoriObject.getString("Deskripsi"));
                             }
-                            kategori.setProID(kategoriObject.getString("kryId")); // Assuming 'kryId' is used for the program ID
+                            kategori.setProID(kategoriObject.getString("kryId"));
                             kategoriList.add(kategori);
                         }
                         callback.onSuccess(kategoriList);
@@ -340,4 +367,7 @@ public class KategoriRepository {
         });
     }
 
+    public boolean getBooked(String key) {
+        return bookmarkedCategories.contains(key);
+    }
 }

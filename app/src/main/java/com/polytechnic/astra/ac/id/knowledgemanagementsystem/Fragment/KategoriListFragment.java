@@ -65,6 +65,7 @@ public class KategoriListFragment extends RecyclerView.Adapter<KategoriListFragm
         KategoriModel kategoriModel = kategoriModelList.get(position);
         holder.titleTextView.setText("Program : " + kategoriModel.getNamaKategori());
 
+        // Cari MateriModel yang sesuai dengan KategoriModel
         for (MateriModel materiModel : materiModelList) {
             if (materiModel.getKategori().equals(kategoriModel.getNamaKategori())) {
                 holder.tanggal.setText("Tanggal : " + materiModel.getCreadate());
@@ -77,32 +78,37 @@ public class KategoriListFragment extends RecyclerView.Adapter<KategoriListFragm
                 holder.program.setText("Materi : ");
             }
         }
+
         KategoriDatabaseHelper dbHelperKat = new KategoriDatabaseHelper(context);
+        KategoriRepository kategoriRepository = KategoriRepository.get();
+        LoginModel loginModel = LoginSession.getInstance().getLoginModel();
         BookmarkDatabaseHelper dbHelper = new BookmarkDatabaseHelper(context);
 
-        // Check if the item is bookmarked and update the bookmark button state
+        // Periksa apakah item sudah di-bookmark dan perbarui status ikon bookmark
         boolean isBookmarked = dbHelper.isBookmarked(kategoriModel.getKey());
         holder.bookmarkButton.setImageResource(isBookmarked ? R.drawable.ic_bookmark_fill : R.drawable.ic_bookmark_empty);
 
         holder.bookmarkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LoginModel loginModel = LoginSession.getInstance().getLoginModel();
                 if (loginModel != null) {
-                    KategoriRepository kategoriRepository = KategoriRepository.get();
-                    System.out.println("BIJIG:" + loginModel.getKryId());
-                    System.out.println("BIJIG2:" + kategoriModel.getKey());
-                    kategoriRepository.createBookmark(kategoriModel.getKey(), loginModel.getKryId());
+                    // Dapatkan status saat ini
+                    boolean currentStatus = dbHelper.isBookmarked(kategoriModel.getKey());
+
+                    if (currentStatus) {
+                        // Hapus bookmark
+                        kategoriRepository.deleteBookmark(kategoriModel.getKey(), loginModel.getKryId());
+                        dbHelper.removeBookmark(kategoriModel.getKey()); // Hapus dari database lokal
+                        holder.bookmarkButton.setImageResource(R.drawable.ic_bookmark_empty);
+                    } else {
+                        // Tambah bookmark
+                        kategoriRepository.createBookmark(kategoriModel.getKey(), loginModel.getKryId());
+                        dbHelper.addBookmark(kategoriModel.getKey()); // Tambah ke database lokal
+                        holder.bookmarkButton.setImageResource(R.drawable.ic_bookmark_fill);
+                    }
                 } else {
                     Log.e("Bookmark", "LoginModel is null");
                 }
-//                if (dbHelper.isBookmarked(kategoriModel.getNamaKategori())) {
-//                    dbHelper.removeBookmark(kategoriModel.getNamaKategori());
-//                    holder.bookmarkButton.setImageResource(R.drawable.ic_bookmark_empty);
-//                } else {
-//                    dbHelper.addBookmark(kategoriModel.getKey());
-//                    holder.bookmarkButton.setImageResource(R.drawable.ic_bookmark_fill);
-//                }
             }
         });
 
@@ -144,5 +150,6 @@ public class KategoriListFragment extends RecyclerView.Adapter<KategoriListFragm
         }
 
     }
+
 
 }
