@@ -159,24 +159,16 @@
             android:orientation="horizontal"
             android:gravity="center_vertical">
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Materi Tersimpan"
-                android:textColor="@color/black"
-                android:textAlignment="center"/>
-
             <Button
-
                 android:id="@+id/materi_tersimpan"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Show All"
+                android:text="Materi Tersimpan"
                 android:textColor="@color/white"
-                android:layout_marginHorizontal="8dp"
-                android:backgroundTint="#0056A6"/>
+                android:layout_marginHorizontal="75dp"
+                android:backgroundTint="#0056A6"
+                android:drawableLeft="@drawable/ic_bookmark_fill"/>
         </LinearLayout>
     </LinearLayout>
 

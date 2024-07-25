@@ -38,6 +38,7 @@ public class MateriTersimpan extends AppCompatActivity {
     private ImageButton back;
     private BookmarkViewModel bookmarkViewModel;
     private KategoriListFragment kategoriListFragment;
+    private MateriViewModel materiViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +51,9 @@ public class MateriTersimpan extends AppCompatActivity {
 
         materiRepository = MateriRepository.get();
 
-        kategoriListFragment = new KategoriListFragment(new ArrayList<>(), this);
+        materiViewModel = new ViewModelProvider(this).get(MateriViewModel.class);
+
+        kategoriListFragment = new KategoriListFragment(new ArrayList<>(), this, materiViewModel);
         recyclerView.setAdapter(kategoriListFragment);
 
         bookmarkViewModel = new ViewModelProvider(this).get(BookmarkViewModel.class);

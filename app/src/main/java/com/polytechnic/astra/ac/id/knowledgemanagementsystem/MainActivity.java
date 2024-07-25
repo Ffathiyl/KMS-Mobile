@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Repository.LoginRepository;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Activity.LoginActivity;
@@ -41,17 +42,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void login() {
-        String username = usernameEditText.getText().toString().trim();  // Trim untuk menghilangkan spasi tambahan
+        String username = usernameEditText.getText().toString().trim(); // Trim untuk menghilangkan spasi tambahan
+        String password = passwordEditText.getText().toString().trim(); // Tambahkan validasi password
+
+        // Validasi jika username atau password kosong
+        if (username.isEmpty() || password.isEmpty()) {
+            Toast.makeText(getApplicationContext(), "Username atau Kata Sandi tidak boleh kosong", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         LoginRepository loginRepository = LoginRepository.get();
-        loginRepository.getUserLogin(username);
         loginRepository.setUsername(username);
 
         loginRepository.getLogin().observe(this, new Observer<List<LoginModel>>() {
             @Override
             public void onChanged(List<LoginModel> loginModels) {
                 if (loginModels != null && !loginModels.isEmpty()) {
-                    // If data is not empty, save login data and navigate to MainActivity
                     LoginModel loginModel = loginModels.get(0);
 
                     // Simpan data login ke singleton
@@ -62,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(intent);
                     finish();
                 } else {
+                    Toast.makeText(getApplicationContext(), "Username atau Kata Sandi Salah", Toast.LENGTH_SHORT).show();
                     // Show error if no data found
                     Log.e("LoginActivity", "No data found");
                 }

@@ -75,7 +75,7 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
+        android:layout_margin="12dp"
         app:cardCornerRadius="8dp"
         app:cardElevation="4dp"
         app:cardBackgroundColor="@color/white">
@@ -141,7 +141,6 @@
                     android:id="@+id/unduh"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="#0056A6"
                     android:text="Unduh"
                     android:textColor="#FFFFFF" />
             </LinearLayout>

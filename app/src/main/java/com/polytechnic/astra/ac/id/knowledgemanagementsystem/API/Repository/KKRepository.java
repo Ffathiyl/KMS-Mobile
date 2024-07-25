@@ -66,8 +66,6 @@ public class KKRepository {
                                 kk.setDeskripsi(kkObject.getString("Deskripsi"));
                             }
                             kk.setProdi(kkObject.getString("Prodi"));
-//                            System.out.println("PEEEE: "+kkObject.getString("Nama Kelompok Keahlian"));
-//                            kk.setDeskripsi(kkObject.getString("Deskripsi"));
                             KKList.add(kk);
                         }
                         data.setValue(KKList);

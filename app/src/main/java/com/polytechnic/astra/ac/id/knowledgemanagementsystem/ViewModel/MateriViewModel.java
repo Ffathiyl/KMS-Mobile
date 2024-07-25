@@ -17,13 +17,13 @@ public class MateriViewModel extends ViewModel {
     private MateriRepository mMateriRepository;
     public MateriViewModel(){
         mMateriRepository = MateriRepository.get();
-//        mMyModelListMutableLiveData = mProdiRepository.getListProdi();
         mMyModelListMutableLiveData = mMateriRepository.getListMateri();
     }
     public MutableLiveData<List<MateriModel>> getListModel(){
         return mMyModelListMutableLiveData;
     }
-    public void loadMateri() {
-        mMateriRepository.getListMateri().observeForever(materiModels -> mMyModelListMutableLiveData.postValue(materiModels));
+
+    public void refreshData() {
+        mMyModelListMutableLiveData = mMateriRepository.getListMateri();
     }
 }

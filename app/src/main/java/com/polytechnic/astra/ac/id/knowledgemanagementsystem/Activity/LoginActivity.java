@@ -33,6 +33,7 @@ import com.polytechnic.astra.ac.id.knowledgemanagementsystem.R;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.ViewModel.BookmarkViewModel;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.ViewModel.KKViewModel;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.ViewModel.KategoriViewModel;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.ViewModel.MateriViewModel;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.ViewModel.ProdiListViewModel;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.ViewModel.RecentViewModel;
 
@@ -58,6 +59,7 @@ public class LoginActivity extends AppCompatActivity {
     private KategoriViewModel kategoriViewModel;
     private LinearLayout fileMateri;
     private LoginModel loginModel;
+    private MateriViewModel materiViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +78,7 @@ public class LoginActivity extends AppCompatActivity {
         bookmarkButton.setTag(false);
 
         loginModel = (LoginModel) getIntent().getSerializableExtra("LoginModel");
-        System.out.println("LOGINMODEL: " + loginModel.getNama());
+        System.out.println("LOGINMODEL: " + loginModel.getKryId());
         if (loginModel != null) {
             nama.setText("Hai, " + loginModel.getNama());
         } else {
@@ -90,8 +92,8 @@ public class LoginActivity extends AppCompatActivity {
         recyclerView.setAdapter(prodiAdapter);
 
         prodiViewModel = new ViewModelProvider(this).get(ProdiListViewModel.class);
-
         recentViewModel = new ViewModelProvider(this).get(RecentViewModel.class);
+        materiViewModel = new ViewModelProvider(this).get(MateriViewModel.class);
 
         logoutButton.setOnClickListener(v -> {
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
@@ -155,12 +157,18 @@ public class LoginActivity extends AppCompatActivity {
                 if (loginModel != null) {
                     if (materiModel.isBookmark()) {
                         // Hapus bookmark
-                        materiRepository.deleteBookmark(materiModel.getKey(), loginModel.getKryId());
-                        bookmarkButton.setImageResource(R.drawable.ic_bookmark_empty);
+                        materiRepository.deleteBookmark(materiModel.getKey(), loginModel.getKryId(), () -> {
+                            materiModel.setBookmark(false);
+                            bookmarkButton.setImageResource(R.drawable.ic_bookmark_empty);
+                            materiViewModel.refreshData(); // Refresh data setelah perubahan
+                        });
                     } else {
                         // Tambah bookmark
-                        materiRepository.createBookmark(materiModel.getKey(), loginModel.getKryId());
-                        bookmarkButton.setImageResource(R.drawable.ic_bookmark_fill);
+                        materiRepository.createBookmark(materiModel.getKey(), loginModel.getKryId(), () -> {
+                            materiModel.setBookmark(true);
+                            bookmarkButton.setImageResource(R.drawable.ic_bookmark_fill);
+                            materiViewModel.refreshData(); // Refresh data setelah perubahan
+                        });
                     }
                 } else {
                     Log.e("Bookmark", "LoginModel is null");

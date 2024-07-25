@@ -11,21 +11,17 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Repository.KategoriRepository;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Repository.MateriRepository;
-import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Repository.ProgramRepository;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Activity.FileMateri;
-import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Activity.MataKuliah;
-import com.polytechnic.astra.ac.id.knowledgemanagementsystem.DBHelper.BookmarkDatabaseHelper;
-import com.polytechnic.astra.ac.id.knowledgemanagementsystem.DBHelper.KategoriDatabaseHelper;
-import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.KKModel;
-import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.KategoriModel;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.LoginModel;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.LoginSession;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.MateriModel;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.R;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.ViewModel.MateriViewModel;
 
 import java.util.List;
 
@@ -33,13 +29,15 @@ public class KategoriListFragment extends RecyclerView.Adapter<KategoriListFragm
 
     private List<MateriModel> materiModelList;
     private Context context;
+    private MateriViewModel materiViewModel;
 
-    public KategoriListFragment(List<MateriModel> materiModelList, Context context) {
+    public KategoriListFragment(List<MateriModel> materiModelList, Context context, MateriViewModel materiViewModel) {
         this.materiModelList = materiModelList;
         this.context = context;
+        this.materiViewModel = materiViewModel;
     }
 
-    public void setMateriModelList(List<MateriModel> materiModelList){
+    public void setMateriModelList(List<MateriModel> materiModelList) {
         this.materiModelList = materiModelList;
         notifyDataSetChanged();
     }
@@ -60,7 +58,6 @@ public class KategoriListFragment extends RecyclerView.Adapter<KategoriListFragm
         holder.program.setText("Kategori : " + materiModel.getKategori());
 
         MateriRepository materiRepository = MateriRepository.get();
-
         LoginModel loginModel = LoginSession.getInstance().getLoginModel();
 
         holder.bookmarkButton.setImageResource(materiModel.isBookmark() ? R.drawable.ic_bookmark_fill : R.drawable.ic_bookmark_empty);
@@ -71,12 +68,18 @@ public class KategoriListFragment extends RecyclerView.Adapter<KategoriListFragm
                 if (loginModel != null) {
                     if (materiModel.isBookmark()) {
                         // Hapus bookmark
-                        materiRepository.deleteBookmark(materiModel.getKey(), loginModel.getKryId());
-                        holder.bookmarkButton.setImageResource(R.drawable.ic_bookmark_empty);
+                        materiRepository.deleteBookmark(materiModel.getKey(), loginModel.getKryId(), () -> {
+                            materiModel.setBookmark(false);
+                            notifyItemChanged(holder.getAdapterPosition());
+                            materiViewModel.refreshData(); // Refresh data setelah perubahan
+                        });
                     } else {
                         // Tambah bookmark
-                        materiRepository.createBookmark(materiModel.getKey(), loginModel.getKryId());
-                        holder.bookmarkButton.setImageResource(R.drawable.ic_bookmark_fill);
+                        materiRepository.createBookmark(materiModel.getKey(), loginModel.getKryId(), () -> {
+                            materiModel.setBookmark(true);
+                            notifyItemChanged(holder.getAdapterPosition());
+                            materiViewModel.refreshData(); // Refresh data setelah perubahan
+                        });
                     }
                 } else {
                     Log.e("Bookmark", "LoginModel is null");
@@ -96,7 +99,6 @@ public class KategoriListFragment extends RecyclerView.Adapter<KategoriListFragm
             }
         });
     }
-
 
     @Override
     public int getItemCount() {
@@ -120,6 +122,5 @@ public class KategoriListFragment extends RecyclerView.Adapter<KategoriListFragm
             author = itemView.findViewById(R.id.authorTextView);
             program = itemView.findViewById(R.id.programTextView);
         }
-
     }
 }

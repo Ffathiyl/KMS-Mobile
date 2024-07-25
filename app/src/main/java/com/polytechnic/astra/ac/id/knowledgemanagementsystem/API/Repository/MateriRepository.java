@@ -9,6 +9,8 @@ import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.ApiUtils;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Service.KategoriService;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Service.MateriService;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.KategoriModel;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.LoginModel;
+import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.LoginSession;
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.Model.MateriModel;
 
 import org.json.JSONArray;
@@ -69,7 +71,6 @@ public class MateriRepository {
     }
 
     public MutableLiveData<List<MateriModel>> getListMateri() {
-        System.out.println("PROO: " + pro);
         MutableLiveData<List<MateriModel>> data = new MutableLiveData<>();
 
         if (listArrayBookmark.isEmpty()) getBookmark();
@@ -114,17 +115,7 @@ public class MateriRepository {
                             String formattedDateStr = targetFormat.format(date);
                             materi.setCreadate(formattedDateStr + " ");
 
-                            for (String b : listArrayBookmark) {
-                                if (materi.getKey().equals(b)) {
-                                    materi.setBookmark(true);
-                                    break; // Stop loop if bookmark is found
-                                } else {
-                                    materi.setBookmark(false);
-                                }
-                            }
-
-                            System.out.println("sadljsakd : " + materi.getJudulKK());
-                            System.out.println("sdfsdfs : " + materi.isBookmark());
+                            materi.setBookmark(listArrayBookmark.contains(materi.getKey()));
 
                             MateriList.add(materi);
                         }
@@ -163,7 +154,6 @@ public class MateriRepository {
         }
 
         for (String mat_id : listArrayBookmark) {
-            System.out.println("MATIDD: " + mat_id);
             RequestBody body = RequestBody.create(MediaType.parse("application/json"), "{ \"mat_id\": \"" + mat_id + "\" }");
             Call<ResponseBody> call = mKateriService.getDataMateriById(body);
 
@@ -231,9 +221,9 @@ public class MateriRepository {
         MutableLiveData<MateriModel> data = new MutableLiveData<>();
         MateriModel materiList = new MateriModel();
 
-        System.out.println("OQEIOIQE");
+        LoginModel loginModel = LoginSession.getInstance().getLoginModel();
 
-        RequestBody body = RequestBody.create(MediaType.parse("application/json"), "{ \"mat_id\": \"9656\" }");
+        RequestBody body = RequestBody.create(MediaType.parse("application/json"), "{ \"mat_id\": \""+loginModel.getKryId()+"\" }");
         Call<ResponseBody> call = mKategoriService.GetRecent(body);
 
         call.enqueue(new Callback<ResponseBody>() {
@@ -267,12 +257,10 @@ public class MateriRepository {
                             } catch (ParseException e) {
                                 e.printStackTrace();
                             }
-                            System.out.println("MATJUD: " + materiObject.getString("mat_judul"));
 
                             String formattedDateStr = targetFormat.format(date);
                             materi.setCreadate(formattedDateStr + " ");
 
-                            System.out.println("MATBKMRK: " + materi.isBookmark());
                             // Update LiveData with the new data
                             data.postValue(materi);
                         }
@@ -294,27 +282,9 @@ public class MateriRepository {
         return data;
     }
 
-
     public void getBookmark() {
-        System.out.println("Calling Bookmark...");
-//        LoginModel loginModel = LoginSession.getInstance().getLoginModel();
-//        if (loginModel == null) {
-//            Log.e(TAG, "LoginModel is null");
-//            MutableLiveData<List<String>> data = new MutableLiveData<>();
-//            data.setValue(new ArrayList<>()); // Return empty list
-//            return data;
-//        }
-//
-//        String kry = loginModel.getKryId();
-//        if (kry == null || kry.isEmpty()) {
-//            Log.e(TAG, "kry_id is null or empty");
-//            MutableLiveData<List<String>> data = new MutableLiveData<>();
-//            data.setValue(new ArrayList<>()); // Return empty list
-//            return data;
-//        }
-//
-//        Log.d(TAG, "KRY: " + kry);
-        String jsonBody = "{\"kry\":\"9656\"}";
+        LoginModel loginModel = LoginSession.getInstance().getLoginModel();
+        String jsonBody = "{\"kry\":\""+loginModel.getKryId()+"\"}";
         RequestBody body = RequestBody.create(MediaType.parse("application/json"), jsonBody);
 
         Call<ResponseBody> call = mKategoriService.GetBookmark(body);
@@ -353,8 +323,9 @@ public class MateriRepository {
 //        return data;
     }
 
-    public void deleteBookmark(String mat, String kry) {
-        String jsonBody = "{ \"kategori\": \"" + mat + "\", \"kry\":\"9656\"}";
+    public void deleteBookmark(String mat, String kry, Runnable onComplete) {
+        LoginModel loginModel = LoginSession.getInstance().getLoginModel();
+        String jsonBody = "{ \"kategori\": \"" + mat + "\", \"kry\":\""+loginModel.getKryId()+"\"}";
         RequestBody body = RequestBody.create(MediaType.parse("application/json"), jsonBody);
 
         Call<ResponseBody> call = mKategoriService.DeleteBookmark(body);
@@ -366,6 +337,7 @@ public class MateriRepository {
                     if (listArrayBookmark != null) {
                         listArrayBookmark.remove(mat);
                     }
+                    onComplete.run(); // Callback setelah operasi selesai
                 } else {
                     Log.e("TAG", "Response is not successful or body is null");
                 }
@@ -378,12 +350,13 @@ public class MateriRepository {
         });
     }
 
-    public void createBookmark(String kat, String kry) {
+    public void createBookmark(String kat, String kry, Runnable onComplete) {
+        LoginModel loginModel = LoginSession.getInstance().getLoginModel();
         if (listArrayBookmark.isEmpty()) {
             getBookmark();
         }
 
-        String jsonBody = "{ \"kategori\": \"" + kat + "\", \"kry\":\"9656\"}";
+        String jsonBody = "{ \"kategori\": \"" + kat + "\", \"kry\":\""+loginModel.getKryId()+"\"}";
         RequestBody body = RequestBody.create(MediaType.parse("application/json"), jsonBody);
 
         Call<ResponseBody> call = mKategoriService.CreateBookmark(body);
@@ -395,6 +368,7 @@ public class MateriRepository {
                     if (listArrayBookmark != null && !listArrayBookmark.contains(kat)) {
                         listArrayBookmark.add(kat);
                     }
+                    onComplete.run(); // Callback setelah operasi selesai
                 } else {
                     Log.e("TAG", "Response is not successful or body is null");
                 }
@@ -406,65 +380,4 @@ public class MateriRepository {
             }
         });
     }
-
-//    public String getRecent() {
-//        System.out.println("Calling Bookmark...");
-////        LoginModel loginModel = LoginSession.getInstance().getLoginModel();
-////        if (loginModel == null) {
-////            Log.e(TAG, "LoginModel is null");
-////            MutableLiveData<List<String>> data = new MutableLiveData<>();
-////            data.setValue(new ArrayList<>()); // Return empty list
-////            return data;
-////        }
-////
-////        String kry = loginModel.getKryId();
-////        if (kry == null || kry.isEmpty()) {
-////            Log.e(TAG, "kry_id is null or empty");
-////            MutableLiveData<List<String>> data = new MutableLiveData<>();
-////            data.setValue(new ArrayList<>()); // Return empty list
-////            return data;
-////        }
-////
-////        Log.d(TAG, "KRY: " + kry);
-//        String result;
-//        String jsonBody = "{\"kry\":\"9656\"}";
-//        RequestBody body = RequestBody.create(MediaType.parse("application/json"), jsonBody);
-//
-//        Call<ResponseBody> call = mKategoriService.GetRecent(body);
-//        call.enqueue(new Callback<ResponseBody>() {
-//            @Override
-//            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-//                if (response.isSuccessful() && response.body() != null) {
-//                    try {
-//                        String jsonString = response.body().string();
-//                        JSONArray jsonArray = new JSONArray(jsonString);
-//
-//                        for (int i = 0; i < jsonArray.length(); i++) {
-//                            JSONObject jsonObject = jsonArray.getJSONObject(i);
-//                            String smpId = String.valueOf(jsonObject.getString("matId"));
-//                            System.out.println("ESEMPE: "+smpId);
-//                            return smpId;
-////                            listArrayBookmark.add(smpId);
-//                        }
-//
-////                        data.setValue(listArrayBookmark);
-//                    } catch (Exception e) {
-//                        Log.e(TAG, "Error parsing JSON", e);
-////                        data.setValue(new ArrayList<>()); // Ensure data is set even if parsing fails
-//                    }
-//                } else {
-//                    Log.e(TAG, "Response is not successful or body is null");
-////                    data.setValue(new ArrayList<>()); // Ensure data is set even if API response fails
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<ResponseBody> call, Throwable t) {
-//                Log.e("Error API call: ", t.getMessage());
-////                data.setValue(new ArrayList<>()); // Ensure data is set even if API call fails
-//            }
-//        });
-//        return null;
-////        return data;
-//    }
 }

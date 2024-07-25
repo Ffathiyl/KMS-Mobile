@@ -14,7 +14,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="PRODI"
-            android:background="#0056A6"
+            android:background="@drawable/rounded_prodis"
             android:paddingHorizontal="10dp"
             android:textColor="@color/white"/>
 

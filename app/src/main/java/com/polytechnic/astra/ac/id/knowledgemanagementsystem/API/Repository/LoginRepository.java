@@ -64,13 +64,24 @@ public class LoginRepository {
                         List<LoginModel> loginList = new ArrayList<>();
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject prodiObject = jsonArray.getJSONObject(i);
+
+                            if (prodiObject.has("Status") && "LOGIN FAILED".equals(prodiObject.getString("Status"))) {
+                                data.setValue(null);
+                                Log.e(TAG, "Login failed");
+                                return;
+                            }
+
                             LoginModel prodi = new LoginModel();
                             prodi.setRoleID(prodiObject.getString("RoleID"));
                             prodi.setRole(prodiObject.getString("Role"));
                             prodi.setNama(prodiObject.getString("Nama"));
+                            prodi.setKryId(prodiObject.getString("KryId"));
                             loginList.add(prodi);
                         }
                         data.setValue(loginList);
+                        if (!loginList.isEmpty()) {
+                            LoginSession.getInstance().setLoginModel(loginList.get(0));
+                        }
                         Log.d(TAG, "Data size: " + loginList.size());
 
                         // Log detail data yang diterima
@@ -126,7 +137,6 @@ public class LoginRepository {
                             if (prodiObject.has("kry_id")) {
                                 prodi.setKryId(prodiObject.getString("kry_id"));
                             }
-                            System.out.println("MAKAN TAI: "+prodi.getKryId());
                             loginList.add(prodi);
                         }
                         data.setValue(loginList);

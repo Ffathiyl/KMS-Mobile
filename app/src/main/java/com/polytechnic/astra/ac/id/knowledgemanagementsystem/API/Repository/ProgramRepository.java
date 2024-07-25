@@ -48,7 +48,6 @@ public class ProgramRepository {
     }
     public MutableLiveData<List<ProgramModel>> getListProgram() {
         MutableLiveData<List<ProgramModel>> data = new MutableLiveData<>();
-        System.out.println("PELER: "+kk);
 
         RequestBody body = RequestBody.create(MediaType.parse("application/json"), "{ \"page\": 1, \"query\": \"\", \"sort\": \"[Nama Program] asc\",\"Status\" : \"Aktif\", \"KKID\" : \""+kk+"\"  }");
         System.out.println(body.contentType());
@@ -75,7 +74,6 @@ public class ProgramRepository {
                             }
 //                            kk.setDeskripsi(kkObject.getString("Deskripsi"));
                             ProgramList.add(programModel);
-//                            System.out.println("SSSSSSSSSS : "+ProgramList);
                         }
                         data.setValue(ProgramList);
                         Log.d(TAG, "Data size: " + ProgramList.size());

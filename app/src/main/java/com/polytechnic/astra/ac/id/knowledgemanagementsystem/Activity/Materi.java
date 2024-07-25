@@ -35,9 +35,8 @@ public class Materi extends AppCompatActivity {
     private TextView nama;
     private ImageButton back;
     private RecyclerView recyclerView;
-    private KategoriListFragment kategoriListFragment;
+    private KategoriListFragment kategoriListFragmentAdapter;
     private MateriViewModel materiViewModel;
-    private BookmarkViewModel bookmarkViewModel;
     private ProgramModel programModel;
 
     @Override
@@ -52,81 +51,28 @@ public class Materi extends AppCompatActivity {
 
         programModel = (ProgramModel) getIntent().getSerializableExtra("programModel");
         if (programModel != null) {
-            nama.setText(programModel.getNamaProgram()); // 011
+            nama.setText(programModel.getNamaProgram());
         }
-
-        // Initialize Adapter with empty list
-        kategoriListFragment = new KategoriListFragment(new ArrayList<>(), this);
-        recyclerView.setAdapter(kategoriListFragment);
 
         // Initialize ViewModel
         materiViewModel = new ViewModelProvider(this).get(MateriViewModel.class);
 
-//        bookmarkViewModel = new ViewModelProvider(this).get(BookmarkViewModel.class);
+        // Initialize Adapter with empty list and ViewModel
+        kategoriListFragmentAdapter = new KategoriListFragment(new ArrayList<>(), this, materiViewModel);
+        recyclerView.setAdapter(kategoriListFragmentAdapter);
 
         // Initialize Repository
         MateriRepository materiRepository = MateriRepository.get();
         materiRepository.setPro(programModel.getKey());
 
-//        List<String> listBookmark = new ArrayList<>();
-//
-//        bookmarkViewModel.getListModel().observe(this, bookmarks -> {
-//            listBookmark.clear(); // Clear previous data
-//            listBookmark.addAll(bookmarks);
-//            System.out.println("Bookmark List Updated: " + listBookmark.size());
-//
-//            // Now observe materi data after bookmarks are fetched
-//            observeMateriData(listBookmark);
-//        });
-
         materiViewModel.getListModel().observe(this, materiModels -> {
             List<MateriModel> listMateri = new ArrayList<>();
-            System.out.println("MMM:"+materiModels.size());
             for (MateriModel mm : materiModels) {
                 listMateri.add(mm);
-                System.out.println("MATERISHS:" + mm.isBookmark());
             }
-
-            kategoriListFragment.setMateriModelList(listMateri);
-            kategoriListFragment.notifyDataSetChanged();
+            kategoriListFragmentAdapter.setMateriModelList(listMateri);
+            kategoriListFragmentAdapter.notifyDataSetChanged();
         });
-
-//        KategoriRepository kategoriRepository = KategoriRepository.get();
-//        kategoriRepository.setProdi(programModel.getKey());
-//
-//        // Observe LiveData from ViewModel
-//        kategoriViewModel.getListModel().observe(this, kategoriModels -> {
-//            List<KategoriModel> filteredKategoriModels = new ArrayList<>();
-//            List<MateriModel> listMateri = new ArrayList<>();
-//
-//            // Ensure we clear the previous data
-//            kategoriListFragment.setKategoriModelList(new ArrayList<>());
-//            kategoriListFragment.setMateriModelList(new ArrayList<>());
-//            kategoriListFragment.notifyDataSetChanged();
-//
-//            // Loop through each kategori and fetch the corresponding materi
-//            for (KategoriModel kategoriModel : kategoriModels) {
-//                filteredKategoriModels.add(kategoriModel);
-//
-//                // Fetch materi for each kategori
-//                MateriRepository materiRepository = MateriRepository.get();
-//                materiRepository.setKat(kategoriModel.getKey());
-//
-//                materiViewModel.getListModel().observe(this, materiModels -> {
-//                    for (MateriModel matMod : materiModels) {
-//                        if (matMod.getKategori().equals(kategoriModel.getNamaKategori())) {
-//                            listMateri.add(matMod);
-//                            System.out.println("Materi: " + matMod.getJudulKK());
-//                        }
-//                    }
-//                    kategoriListFragment.setMateriModelList(listMateri);
-//                    kategoriListFragment.notifyDataSetChanged();
-//                });
-//            }
-//
-//            kategoriListFragment.setKategoriModelList(filteredKategoriModels);
-//            kategoriListFragment.notifyDataSetChanged();
-//        });
 
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -135,29 +81,31 @@ public class Materi extends AppCompatActivity {
             }
         });
     }
-
-    private void observeMateriData(List<String> listBookmark) {
-        materiViewModel.getListModel().observe(this, materiModels -> {
-            List<MateriModel> listMateri = new ArrayList<>();
-            System.out.println("MMM: " + materiModels.size());
-
-            for (MateriModel mm : materiModels) {
-                System.out.println("BBB: " + listBookmark.size());
-                for (String b : listBookmark) {
-                    if (mm.getKey().equals(b)) {
-                        mm.setBookmark(true);
-                        break; // Stop loop if bookmark is found
-                    } else {
-                        mm.setBookmark(false);
-                    }
-                }
-
-                listMateri.add(mm);
-                System.out.println("MATERI: " + mm.getJudulKK() + " Bookmark: " + mm.isBookmark());
-            }
-
-            kategoriListFragment.setMateriModelList(listMateri);
-            kategoriListFragment.notifyDataSetChanged();
-        });
-    }
 }
+
+//
+//    private void observeMateriData(List<String> listBookmark) {
+//        materiViewModel.getListModel().observe(this, materiModels -> {
+//            List<MateriModel> listMateri = new ArrayList<>();
+//            System.out.println("MMM: " + materiModels.size());
+//
+//            for (MateriModel mm : materiModels) {
+//                System.out.println("BBB: " + listBookmark.size());
+//                for (String b : listBookmark) {
+//                    if (mm.getKey().equals(b)) {
+//                        mm.setBookmark(true);
+//                        break; // Stop loop if bookmark is found
+//                    } else {
+//                        mm.setBookmark(false);
+//                    }
+//                }
+//
+//                listMateri.add(mm);
+//                System.out.println("MATERI: " + mm.getJudulKK() + " Bookmark: " + mm.isBookmark());
+//            }
+//
+//            kategoriListFragment.setMateriModelList(listMateri);
+//            kategoriListFragment.notifyDataSetChanged();
+//        });
+//    }
+//}

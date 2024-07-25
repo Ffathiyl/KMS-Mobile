@@ -194,7 +194,6 @@ public class FileMateri extends AppCompatActivity {
     private boolean saveFileToDisk(ResponseBody body, String fileName) {
         try {
             File file = new File(getExternalFilesDir(Environment.DIRECTORY_MOVIES), fileName);
-            System.out.println("jskfsk");
             InputStream inputStream = null;
             FileOutputStream outputStream = null;
 

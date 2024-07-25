@@ -130,9 +130,6 @@ public class KategoriRepository {
                     final List<String> finalBookmarkedCategories = new ArrayList<>(bookmarkedCategories);
                     KategoriRepository.this.bookmarkedCategories = finalBookmarkedCategories;
 
-                    // Log isi bookmarkedCategories
-                    Log.d(TAG, "Bookmarked PILIR: " + finalBookmarkedCategories);
-
                     // Fetch kategori berdasarkan id yang dibookmark
                     for (String categoryName : finalBookmarkedCategories) {
                         fetchKategoriById(categoryName, new KategoriCallback() {
@@ -330,7 +327,8 @@ public class KategoriRepository {
     }
 
     public void createRecent(String kat, String kry) {
-        String jsonBody = "{ \"kategori\": \"" + kat + "\", \"kry\": \"9656\"}";
+        LoginModel loginModel = LoginSession.getInstance().getLoginModel();
+        String jsonBody = "{ \"kategori\": \"" + kat + "\", \"kry\": \""+loginModel.getKryId()+"\"}";
         RequestBody body = RequestBody.create(MediaType.parse("application/json"), jsonBody);
 
         Call<ResponseBody> call = mKategoriService.CreateRecent(body);

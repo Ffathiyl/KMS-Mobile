@@ -9,7 +9,7 @@ import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Service.LoginSe
 import com.polytechnic.astra.ac.id.knowledgemanagementsystem.API.Service.ProgramService;
 
 public class ApiUtils {
-    public static final String API_URL = "http://172.20.10.3:8080/";
+    public static final String API_URL = "http://10.1.15.153:8080/";
 
     public ApiUtils() {
     }
