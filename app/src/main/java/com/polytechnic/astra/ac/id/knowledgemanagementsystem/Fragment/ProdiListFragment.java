@@ -32,7 +32,6 @@ public class ProdiListFragment extends RecyclerView.Adapter<ProdiListFragment.Pr
     private List<ProdiModel> prodiModelList;
     private Context context;
 
-
     public ProdiListFragment(List<ProdiModel> prodiModelList, Context context) {
         this.prodiModelList = prodiModelList;
         this.context = context;

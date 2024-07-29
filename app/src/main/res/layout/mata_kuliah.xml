@@ -37,13 +37,13 @@
     </LinearLayout>
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Daftar Mata Kuliah"
         android:fontFamily="@font/poppinsemibold"
+        android:padding="10dp"
+        android:text="Daftar Program"
         android:textAlignment="center"
-        android:textSize="14sp"
-        android:padding="10dp"/>
+        android:textSize="16sp" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/matkul"

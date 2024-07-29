@@ -24,7 +24,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Program Keilmuan"
+            android:text="Kelompok Keahlian"
             android:fontFamily="@font/poppinsblack"
             android:textAlignment="center"
             android:textSize="18sp"

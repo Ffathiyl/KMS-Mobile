@@ -223,7 +223,7 @@ public class MateriRepository {
 
         LoginModel loginModel = LoginSession.getInstance().getLoginModel();
 
-        RequestBody body = RequestBody.create(MediaType.parse("application/json"), "{ \"mat_id\": \""+loginModel.getKryId()+"\" }");
+        RequestBody body = RequestBody.create(MediaType.parse("application/json"), "{ \"kry_id\": \""+loginModel.getKryId()+"\" }");
         Call<ResponseBody> call = mKategoriService.GetRecent(body);
 
         call.enqueue(new Callback<ResponseBody>() {
@@ -284,14 +284,18 @@ public class MateriRepository {
 
     public void getBookmark() {
         LoginModel loginModel = LoginSession.getInstance().getLoginModel();
+
         String jsonBody = "{\"kry\":\""+loginModel.getKryId()+"\"}";
+
         RequestBody body = RequestBody.create(MediaType.parse("application/json"), jsonBody);
 
         Call<ResponseBody> call = mKategoriService.GetBookmark(body);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
                 if (response.isSuccessful() && response.body() != null) {
+
                     try {
                         String jsonString = response.body().string();
                         JSONArray jsonArray = new JSONArray(jsonString);
@@ -302,14 +306,11 @@ public class MateriRepository {
                             listArrayBookmark.add(smpId);
                         }
 
-//                        data.setValue(listArrayBookmark);
                     } catch (Exception e) {
                         Log.e(TAG, "Error parsing JSON", e);
-//                        data.setValue(new ArrayList<>()); // Ensure data is set even if parsing fails
                     }
                 } else {
                     Log.e(TAG, "Response is not successful or body is null");
-//                    data.setValue(new ArrayList<>()); // Ensure data is set even if API response fails
                 }
             }
 

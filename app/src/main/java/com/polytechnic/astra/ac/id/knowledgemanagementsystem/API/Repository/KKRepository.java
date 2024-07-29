@@ -42,7 +42,7 @@ public class KKRepository {
     public MutableLiveData<List<KKModel>> getListKK() {
         MutableLiveData<List<KKModel>> data = new MutableLiveData<>();
 
-        RequestBody body = RequestBody.create(MediaType.parse("application/json"), "{ \"page\": 1, \"query\": \"\", \"sort\": \"[Nama Kelompok Keahlian] asc\", \"status\": \"Aktif\" }");
+        RequestBody body = RequestBody.create(MediaType.parse("application/json"), "{ \"page\": 1, \"query\": \"\", \"sort\": \"[Created Date] desc\", \"status\": \"Aktif\" }");
         System.out.println(body.contentType());
         Call<ResponseBody> call = mKKService.getDataKK(body);
         call.enqueue(new Callback<ResponseBody>() {

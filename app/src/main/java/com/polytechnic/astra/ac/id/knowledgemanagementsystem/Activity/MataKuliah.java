@@ -30,9 +30,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MataKuliah extends AppCompatActivity {
-
+    private boolean isBookmark;
+    private boolean x;
     private TextView judul;
-    private ImageButton back;
+    private ImageButton mback;
     private RecyclerView recyclerView;
     private ProgramListFragment programListFragment;
     private ProgramViewModel programViewModel;
@@ -41,7 +42,7 @@ public class MataKuliah extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mata_kuliah);
-        back = findViewById(R.id.back);
+        mback = findViewById(R.id.back);
         judul = findViewById(R.id.materi);
         recyclerView = findViewById(R.id.matkul);
 
@@ -114,7 +115,7 @@ public class MataKuliah extends AppCompatActivity {
             programListFragment.notifyDataSetChanged();
         });
 
-        back.setOnClickListener(new View.OnClickListener() {
+        mback.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();

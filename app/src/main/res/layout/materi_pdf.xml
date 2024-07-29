@@ -38,7 +38,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="About"
+        android:text="Deskripsi"
         android:fontFamily="@font/poppinsemibold"
         android:textAlignment="center"
         android:textSize="14sp"
@@ -142,6 +142,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Unduh"
+                    android:backgroundTint="#0056A6"
                     android:textColor="#FFFFFF" />
             </LinearLayout>
         </LinearLayout>
@@ -152,7 +153,9 @@
         android:id="@+id/btn_play_video"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Putar Video" />
+        android:text="Putar Video"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#0056A6"/>
 
     <androidx.media3.ui.PlayerView
         android:id="@+id/player_view"
